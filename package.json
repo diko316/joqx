@@ -1,0 +1,50 @@
+{
+  "name": "joqx",
+  "version": "0.0.1",
+  "description": "Extensible Javascript Object Query Language (joqx)",
+  "main": "dist/joqx.js",
+  "module": "dist/joqx.es.js",
+  "jsnext:main": "dist/joqx.es.js",
+  "scripts": {
+    "test": "bin/build-bundle.sh test || exit 1",
+    "start": "bin/build-bundle.sh start || exit 1",
+    "build": "bin/build-bundle.sh build || exit 1",
+    "build-optimized": "bin/build-bundle.sh build-optimized || exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://diko316@github.com/diko316/joqx.git"
+  },
+  "keywords": [
+    "Javascript Object Query Language",
+    "JSON Query"
+  ],
+  "author": "Diko Tech Slave",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/diko316/joqx/issues"
+  },
+  "homepage": "https://github.com/diko316/joqx#readme",
+  "devDependencies": {
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.0",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-mocha-reporter": "^2.2.4",
+    "karma-rollup-preprocessor": "^5.0.1",
+    "rollup": "^0.48.2",
+    "rollup-plugin-browsersync": "^0.2.4",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-commonjs": "^8.2.0",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  },
+  "optionalDependencies": {
+    "libcore": "^0.3.7",
+    "libcore-parser-lalr": "^0.0.7",
+    "libcore-package-resolver": "^0.0.7"
+  }
+}
