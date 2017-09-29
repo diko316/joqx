@@ -15,6 +15,8 @@ let pkg = require('../package.json'),
             main: true  // Default: true
 
         }),
+
+        require('rollup-plugin-json')(),
         
         require('rollup-plugin-commonjs')({
             // non-CommonJS modules will be ignored, but you can also

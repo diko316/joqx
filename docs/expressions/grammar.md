@@ -18,6 +18,12 @@ undefined   ->  /undefined/
 
 boolean     ->  /true|false/
 
+```
+
+#### Keywords
+
+```text
+
 typeof      ->  /typeof/
 
 instanceof  ->  /instanceof/
