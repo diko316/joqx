@@ -1,6 +1,8 @@
 'use strict';
 
 
-module.exports = [/ \r\n\t/];
+module.exports = [
+    /[ \r\n\t]+/
+];
 
 

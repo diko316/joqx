@@ -1,5 +1,5 @@
 'use strict';
 
 // test
+export * from "./parser/index.js";
 
-import parser from "./parser/index.js";

@@ -5,107 +5,86 @@ module.exports = [
 // Expressions
     "Joqx",         [
                         [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?/]
+                        
                     ],
 
     "Expression",   [
-                        "SimpleExpr",
-                        "Object"
+                        "SimpleExpr"
                     ],
 
     "SimpleExpr",   [
-                        "Null",
-                        "Undefined",
-                        "Boolean",
-                        "String",
-                        "Number",
-                        "Identifier",
-                        "JsonPath",
-                        "Array",
-                        [/\(/, "Expression", /\)/]
+                        "Identifier"
                     ],
 
-    "CallExpr",     [
-                        "Expression",
-                        "NewExpr",
-                        ["CallExpr", "Access"],
-                        ["CallExpr", "Arguments"]
-                    ],
 
-    "AssignExpr",   [
-                        ["CallExpr", /\=/, "AssignExpr"],
-                    ],
+// Assignment
+    // "Assignment",   [
+    //                     ["Accessed", /\=/, "Assignment"],
+    //                     "Accessed"
+                        
+    //                 ],
 
-    "NewExpr",      [
-                        [/new/, "CallExpr"]
-                    ],
+
+    // "Access",       [
+    //                     [/\./, "Identifier"],
+    //                     [/\[/, "SimpleExpr", /\]/]
+    //                 ],
 
     
-// Collection Expression
-    "Access",       [
-                        [/\./, "Identifier"],
-                        [/\[/, "Expression", /\]/]
+
+// Accessed
+    // "Accessed",     [
+    //                     ["SimpleObject", /\./, "Identifier"],
+    //                     "Identifier"
+    //                 ],
+
+    "SimpleObject", [
+                        "String",
+                        "Number",
+                        "JsonPath",
+                        "Array",
+                        "Object",
+                        [/\(/, "SimpleExpr", /\)/]
                     ],
 
     "Arguments",    [
                         [/\(/, /\)/],
-                        [/\(/, "ArgumentList", /\)/]
+                        [/\(/, "ArgumentsList", /\)/]
                     ],
 
-    "ArgumentList", [
-                        ["ArgumentList", "AssignExpr"],
-                        "AssignExpr"
-                    ],
-
+// Array
     "Array",        [
                         [/\[/, /\]/],
-                        [/\[/, "ArrayItemList", /\]/]
+                        [/\[/, "ArgumentList", /\]/]
                     ],
-    "ItemList",     [
-                        ["ItemList", /\,/, "AssignExpr"],
-                        "AssignExpr"
+    
+
+    "ArgumentList", [
+                        ["ArgumentList", /\,/, "SimpleExpr"],
+                        "SimpleExpr"
                     ],
 
-    "Object",       [
+// Object
+    "Object",        [
                         [/\{/, /\}/],
                         [/\{/, "FieldList", /\}/]
                     ],
 
     "FieldList",    [
-                        ["Identifier", /\:/, "AssignExpr"],
-                        ["String", /\:/, "AssignExpr"]
+                        ["FieldList", "Field"],
+                        "Field"
                     ],
 
-// Unary Expressions
-    "UnaryExpr",    [
-                        "PostUnary",
-                        [/\+\+/, "PostUnary"],
-                        [/\-\-/, "PostUnary"],
-                        [/!/, "PostUnary"],
-                        [/typeof/, "PostUnary"]
+    "Field",        [
+                        ["Identifier", /\:/, "SimpleExpr"],
+                        ["String", /\:/, "SimpleExpr"],
+                        ["Number", /\:/, "SimpleExpr"]
                     ],
 
-    "PostUnary",    [
-                        ["CallExpr", /\+\+/],
-                        ["CallExpr", /\-\-/],
-                        "CallExpr"
-                    ],
+// Basic
 
-    "ArithMulti",   [
-                        ["ArithMulti", /\*/, "UnaryExpr"],
-                        ["ArithMulti", /\//, "UnaryExpr"],
-                        ["ArithMulti", /\%/, "UnaryExpr"],
-                        "UnaryExpr"
-                    ],
+    "Identifier",   [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
 
-    "ArithAddi",    [
-                        ["ArithAddi", /\+/, "ArithMulti"],
-                        ["ArithAddi", /\-/, "ArithMulti"],
-                        "ArithMulti"
-                    ],
-
-    
-
-// literals
     "String",       [
                         /\"(\\\"|[^\"])*\"/,
                         /\'(\\\'|[^\'])*\'/
@@ -119,11 +98,6 @@ module.exports = [
 
     "Boolean",      [/true|false/],
 
-    "JsonPath",     [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
-
-    "Identifier",   [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/]
-
-
-    
+    "JsonPath",     [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/]
 
 ];
