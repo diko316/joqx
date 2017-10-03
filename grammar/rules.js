@@ -2,102 +2,101 @@
 
 module.exports = [
 
-// Expressions
-    "Joqx",         [
-                        [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?/]
-                        
-                    ],
-
-    "Expression",   [
-                        "SimpleExpr"
-                    ],
-
-    "SimpleExpr",   [
-                        "Identifier"
-                    ],
 
 
-// Assignment
-    // "Assignment",   [
-    //                     ["Accessed", /\=/, "Assignment"],
-    //                     "Accessed"
-                        
-    //                 ],
+// Root
+    "Joqx",             [
+                            [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?/]
+                        ],
 
 
-    // "Access",       [
-    //                     [/\./, "Identifier"],
-    //                     [/\[/, "SimpleExpr", /\]/]
-    //                 ],
-
+// Lexical Grammar
+    "Identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
     
+    "String",           [
+                            /\"(\\\"|[^\"])*\"/,
+                            /\'(\\\'|[^\'])*\'/
+                        ],
 
-// Accessed
-    // "Accessed",     [
-    //                     ["SimpleObject", /\./, "Identifier"],
-    //                     "Identifier"
-    //                 ],
+    "Number",           [/[\+\-]?[0-9]*\.?[0-9]+/],
 
-    "SimpleObject", [
-                        "String",
-                        "Number",
-                        "JsonPath",
-                        "Array",
-                        "Object",
-                        [/\(/, "SimpleExpr", /\)/]
-                    ],
+    "Null",             [/null/],
 
-    "Arguments",    [
-                        [/\(/, /\)/],
-                        [/\(/, "ArgumentsList", /\)/]
-                    ],
+    "Undefined",        [/undefined/],
+
+    "Boolean",          [/true|false/],
+
+    "JsonPath",         [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
+
+
+// Expression
+    "Expression",       [
+                            "Assignment"
+                        ],
+
+    "Primary",          [
+                            /this/,
+                            "Null",
+                            "Undefined",
+                            "Boolean",
+                            "Number",
+                            "String",
+                            "Identifier",
+                            "Array",
+                            "Object",
+                            [/\(/, "Expression", /\)/]
+                        ],
 
 // Array
-    "Array",        [
-                        [/\[/, /\]/],
-                        [/\[/, "ArgumentList", /\]/]
-                    ],
-    
+    "Array",            [
+                            [/\[/, /\]/],
+                            [/\[/, "Elements", /\]/]
+                        ],
 
-    "ArgumentList", [
-                        ["ArgumentList", /\,/, "SimpleExpr"],
-                        "SimpleExpr"
-                    ],
-
+    "Elements",         [
+                            ["Elements", /\,/, "Assignment"],
+                            "Assignment"
+                        ],
 // Object
-    "Object",        [
-                        [/\{/, /\}/],
-                        [/\{/, "FieldList", /\}/]
-                    ],
+    "Object",       [
+                            [/\{/, /\}/],
+                            [/\{/, "Properties", /\}/]
+                        ],
 
-    "FieldList",    [
-                        ["FieldList", "Field"],
-                        "Field"
-                    ],
+    "Properties",       [
+                            ["Properies", /\,/, "Property"],
+                            "Property"
+                        ],
 
-    "Field",        [
-                        ["Identifier", /\:/, "SimpleExpr"],
-                        ["String", /\:/, "SimpleExpr"],
-                        ["Number", /\:/, "SimpleExpr"]
-                    ],
+    "Property",         [
+                            ["Identifier", /\:/, "Assignment"],
+                            ["String", /\:/, "Assignment"],
+                            ["Number", /\:/, "Assignment"]
 
-// Basic
+                        ],
 
-    "Identifier",   [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
+    "Member",           [
+                            ["Member", "MemberAccess"],
+                            "Primary"
+                        ],
 
-    "String",       [
-                        /\"(\\\"|[^\"])*\"/,
-                        /\'(\\\'|[^\'])*\'/
-                    ],
+    "MemberAccess",     [
+                            [/\./, "Identifier"],
+                            [/\[/, "Expression", /\]/]
+                        ],
 
-    "Number",       [/[\+\-]?[0-9]*\.?[0-9]+/],
+    
+    "Arguments",        [
+                            [/\(/, /\)/],
+                            [/\(/, "ArgumentList", /\)/]
+                        ],
 
-    "Null",         [/null/],
+    "ArgumentList",     [
+                            ["ArgumentList", /\,/, "Expression"],
+                            "Expression"
+                        ],
 
-    "Undefined",    [/undefined/],
-
-    "Boolean",      [/true|false/],
-
-    "JsonPath",     [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/]
-
+    "Assignment",       [
+                            "Member"
+                        ]
 ];
