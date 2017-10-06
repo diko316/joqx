@@ -4,7 +4,7 @@ import { iterator } from "./index.js";
 
 var p;
 
-iterator.set("?buang test[1]['daddy'] ?");
+iterator.set("?buang !buang ?");
 
 p = iterator.next();
 

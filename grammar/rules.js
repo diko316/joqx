@@ -44,6 +44,11 @@ module.exports = [
                             "Identifier",
                             "Array",
                             "Object",
+                            //"Call",
+                            "Group"
+                        ],
+
+    "Group",            [
                             [/\(/, "Expression", /\)/]
                         ],
 
@@ -54,18 +59,20 @@ module.exports = [
                         ],
 
     "Elements",         [
+                            "Assignment",
                             ["Elements", /\,/, "Assignment"],
-                            "Assignment"
+                            
                         ],
 // Object
-    "Object",       [
+    "Object",           [
                             [/\{/, /\}/],
                             [/\{/, "Properties", /\}/]
                         ],
 
     "Properties",       [
-                            ["Properies", /\,/, "Property"],
-                            "Property"
+                            "Property",
+                            ["Properies", /\,/, "Property"]
+                            
                         ],
 
     "Property",         [
@@ -75,9 +82,26 @@ module.exports = [
 
                         ],
 
+// Call
+    "Call",             [
+                            ["Primary", "Arguments"]
+                        ],
+
+    "Arguments",        [
+                            [/\(/, /\)/],
+                            [/\(/, "ArgumentList", /\)/]
+                        ],
+
+    "ArgumentList",     [
+                            "Expression",
+                            ["ArgumentList", /\,/, "Assignment"]
+                        ],
+
+
+// Member
     "Member",           [
-                            ["Member", "MemberAccess"],
-                            "Primary"
+                            "Primary",
+                            ["Member", "MemberAccess"]
                         ],
 
     "MemberAccess",     [
@@ -85,18 +109,104 @@ module.exports = [
                             [/\[/, "Expression", /\]/]
                         ],
 
-    
-    "Arguments",        [
-                            [/\(/, /\)/],
-                            [/\(/, "ArgumentList", /\)/]
+    "Typeof",           [
+                            [/typeof/, "Member"],
                         ],
 
-    "ArgumentList",     [
-                            ["ArgumentList", /\,/, "Expression"],
-                            "Expression"
+    "Delete",           [
+                            [/delete/, "Member"],
                         ],
+
+    "Not",              [
+                            [/!/, "Member"]
+                        ],
+    
+
+// Unary
+    "Unary",            [
+                            "Member",
+                            "Typeof",
+                            "Delete",
+                            "Not",
+
+                            
+                            [/void\(/, "Expression", /\)/]
+                            
+                            // [/delete/, "Unary"],
+                            //[/void\(/, "Unary", /\)/],
+                            // 
+                        ],
+
+    // "Exponential",      [
+    //                         "Unary",
+    //                         ["Exponential", /\*\*/, "Unary"]
+    //                     ],
+
+    // "Multiplicative",   [
+    //                         "Exponential",
+    //                         ["Multiplicative", /\*/, "Exponential"],
+    //                         ["Multiplicative", /\//, "Exponential"],
+    //                         ["Multiplicative", /\%/, "Exponential"]
+    //                     ],
+
+    // "Additive",         [
+    //                         "Multiplicative",
+    //                         ["Additive", /\-/, "Multiplicative"],
+    //                         ["Additive", /\+/, "Multiplicative"]
+    //                     ],
+
+    // "Relational",       [
+    //                         "Additive",
+
+    //                         ["Relational", /</, "Additive"],
+    //                         ["Relational", /lt/, "Additive"],
+
+    //                         ["Relational", /\>/, "Additive"],
+    //                         ["Relational", /gt/, "Additive"],
+
+    //                         ["Relational", /<\=/, "Additive"],
+    //                         ["Relational", /lte/, "Additive"],
+
+    //                         ["Relational", /\>\=/, "Additive"],
+    //                         ["Relational", /gte/, "Additive"],
+
+    //                         ["Relational", /instanceof/, "Additive"],
+    //                         ["Relational", /in/, "Additive"]
+    //                     ],
+
+    // "Equality",         [
+    //                         "Relational",
+
+    //                         ["Equality", /\=\=/, "Relational"],
+    //                         ["Equality", /!\=/, "Relational"],
+    //                         ["Equality", /\=\=\=/, "Relational"],
+    //                         ["Equality", /!\=\=/, "Relational"]
+                            
+    //                     ],
+
+    // "LogicalAnd",       [
+    //                         "Equality",
+    //                         ["LogicalAnd", /\&\&/, "Equality"],
+    //                         ["LogicalAnd", /and/, "Equality"]
+    //                     ],
+
+    // "LogicalOr",        [
+    //                         "LogicalAnd",
+    //                         ["LogicalOr", /\|\|/, "LogicalAnd"],
+    //                         ["LogicalOr", /or/, "LogicalAnd"]
+
+    //                     ],
+
+    // "Conditional",      [
+    //                         "LogicalOr",
+    //                         ["LogicalOr", /\?/, "Assignment", /\:/, "Assignment"]
+    //                     ],
+
+// Assignment
+
 
     "Assignment",       [
-                            "Member"
+                            ["Unary", /\=/, "Assignment"],
+                            "Unary"
                         ]
 ];
