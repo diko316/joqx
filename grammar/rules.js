@@ -3,32 +3,70 @@
 module.exports = [
 
 
-
 // Root
     "Joqx",             [
-                            [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?/]
+                            [/<\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?\>/],
+                            "Expression"
                         ],
 
+    "Expression",       [
+                            "Assignment",
+                            "Delete"
+                        ],
+
+// Keywords
+    "Keyword",          [
+                            /this/,
+                            /true/,
+                            /false/,
+                            /null/,
+                            /undefined/,
+
+                            // unary
+                            /new/,
+                            /delete/,
+
+                            // binary
+                            /typeof/,
+                            /gt/,
+                            /gte/,
+                            /lt/,
+                            /lte/,
+                            /instanceof/,
+                            /and/,
+                            /or/,
+                            /in/
+                        ],
 
 // Lexical Grammar
-    "Identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
-    
     "String",           [
                             /\"(\\\"|[^\"])*\"/,
                             /\'(\\\'|[^\'])*\'/
                         ],
 
-    "Number",           [/[\+\-]?[0-9]*\.?[0-9]+/],
+    "Number",           [
+                            "Decimal",
+                            "Hex",
+                            "Octal"
+                        ],
 
-    "Null",             [/null/],
+    "Decimal",          [
+                            /[\+\-]?[0-9]+/,
+                            /[\+\-]?\.[0-9]+/,
+                            /[\+\-]?[0-9]+\.[0-9]+/,
+                            /[\+\-]?[0-9]+[eE][\+\-]?[0-9]+/,
+                            /[\+\-]?\.[0-9]+[eE][\+\-]?[0-9]+/,
+                            /[\+\-]?[0-9]+\.[0-9]+[eE][\+\-]?[0-9]+/
+                        ],
 
-    "Undefined",        [/undefined/],
+    "Hex",              [/[\+\-]?0[xX][0-9a-fA-F]+/],
 
-    "Boolean",          [/true|false/],
+    "Octal",            [/[\+\-]?0[oO][0-7]+/],
+
+    "Binary",           [/[\+\-]?0[bB][01]+/],
 
     "JsonPath",         [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
 
-    
 // Literals
     "Group",            [
                             [/\(/, "Expression", /\)/]
@@ -41,8 +79,8 @@ module.exports = [
                         ],
 
     "Elements",         [
-                            "Assignment",
-                            ["Elements", /\,/, "Assignment"],
+                            "Expression",
+                            ["Elements", /\,/, "Expression"],
                         ],
 
 // Object
@@ -57,115 +95,92 @@ module.exports = [
                         ],
 
     "Property",         [
-                            ["Identifier", /\:/, "Assignment"],
-                            ["String", /\:/, "Assignment"],
-                            ["Number", /\:/, "Assignment"]
+                            ["Identifier", /\:/, "Expression"],
+                            ["String", /\:/, "Expression"],
+                            ["Number", /\:/, "Expression"]
                         ],
 
 // Function Call
-    "Call",             [
-                            ["Updatable", /\(/, /\)/],
-                            ["Updatable", /\(/, "ArgumentList", /\)/]
+    "Arguments",        [
+                            [/\(/, /\)/],
+                            [/\(/, "ArgumentList", /\)/]
                         ],
 
-    "Arguments",     [
-                            "Assignment",
-                            ["Arguments", /\,/, "Assignment"]
-                        ],
-
-// Expression
-    "Expression",       [
-                            "Assignment"
-                        ],
-
-    "Primary",          [
-                            /this/,
-                            "Null",
-                            "Undefined",
-                            "Boolean",
-                            "Number",
-                            "String",
-                            "Array",
-                            "Object",
-                            "Call",
-                            "Group"
-                        ],
-
-    "Updatable",        [
-                            "Identifier",
-                            "Member",
-                            "Property"
-                        ],
-
-    "Property",         [
-                            ["Primary", /\./, "Identifier"],
-                            ["Updatable", /\./, "Identifier"]
-                            
-                        ],
-
-    "Member",           [
-                            ["Primary", /\[/, "Expression", /\]/],
-                            ["Updatable", /\[/, "Expression", /\]/]
-                        ],
-                        
-// Operand
-    // "Operand",          [
-    //                         "Updatable",
-    //                         "Primary"
-    //                     ],
-// Unary
-    "Typeof",           [
-                            [/typeof/, "Operand"]
+    "ArgumentList",     [
+                            "Expression",
+                            ["ArgumentList", /\,/, "Expression"]
                         ],
 
     "Delete",           [
-                            [/delete/, "Updatable"],
-                        ],
-
-    "Not",              [
-                            [/!/, "Operand"]
+                            [/delete/, "Updatable"]
                         ],
 
     "Void",             [
                             [/void\(/, "Expression", /\)/]
                         ],
-    
-    "PreIncrement",     [
-                            [/\+\+/, "Updatable"]
+// Literal
+    "Identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
+
+    "Literal",          [
+                            /this/,
+                            /true/,
+                            /false/,
+                            /null/,
+                            /undefined/,
+                            "Number",
+                            "String",
+                            "Array",
+                            "Object",
+                            "Void",
+                            "Group"
                         ],
 
-    "PreDecrement",     [
-                            [/\-\-/, "Updatable"]
+// Object Member
+    "Updatable",        [
+                            "Identifier",
+                            ["Primary", "Member"],
+                            ["Primary", "Access"]
                         ],
 
-    "PostIncrement",    [
-                            ["Updatable", /\+\+/]
+    "Access",           [
+                            [/\./, "Identifier"]
                         ],
 
-    "PostDecrement",    [
-                            ["Updatable", /\-\-/]
+    "Member",           [
+                            [/\[/, "Expression", /\]/]
                         ],
 
-    "Operand",          [
+// Function Call
+    "Call",             [
+                            ["Updatable", "Arguments"]
+                        ],
+
+    "Instantiate",      [
+                            [/new/, "Updatable"],
+                            [/new/, "Updatable", "Arguments"]
+                        ],
+
+    "Primary",          [
                             "Updatable",
+                            "Literal",
+                            "Instantiate",
+                            "Call"
+                        ],
+
+    "PreUnary",         [
                             "Primary",
+                            [/\+\+/, "Updatable"],
+                            [/\-\-/, "Updatable"],
+                            [/typeof/, "Primary"],
+                            [/!/, "Primary"]
                         ],
 
     "Unary",            [
-                            "Operand",
-                            "Typeof",
-                            "Delete",
-                            "Not",
-                            "Void",
-                            "PreIncrement",
-                            "PreDecrement",
-                            "PostIncrement",
-                            "PostDecrement"
+                            "PreUnary",
+                            ["Updatable", /\+\+/],
+                            ["Updatable", /\-\-/]
                         ],
 
-//  Binaries
-
-//  Exponential
     "Exponential",      [
                             "Unary",
                             ["Exponential", /\*\*/, "Unary"]
@@ -223,23 +238,24 @@ module.exports = [
                             "LogicalAnd",
                             ["LogicalOr", /\|\|/, "LogicalAnd"],
                             ["LogicalOr", /or/, "LogicalAnd"]
-
                         ],
 // Ternary
     "Conditional",      [
-                            ["LogicalOr", /\?/, "Assignment", /\:/, "Assignment"]
+                            "LogicalOr",
+                            ["LogicalOr", /\?/, "Expression", /\:/, "Expression"]
                         ],
 
     "Assignment",       [
                             "Conditional",
-                            ["Updatable", /\=/, "Assignment"]
-                        ],
+                            ["Updatable", /\=/, "Assignment"],
+                            ["Updatable", /\*\*\=/, "Assignment"],
+                            ["Updatable", /\*\=/, "Assignment"],
+                            ["Updatable", /\/\=/, "Assignment"],
+                            ["Updatable", /\%\=/, "Assignment"],
+                            ["Updatable", /\+\=/, "Assignment"],
+                            ["Updatable", /\-\=/, "Assignment"],
+                        ]
 
-// Assignment
+    
 
-
-    // "Assignment",       [
-    //                         ["Unary", /\=/, "Assignment"],
-    //                         "Unary"
-    //                     ]
 ];
