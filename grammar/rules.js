@@ -2,10 +2,66 @@
 
 module.exports = [
 
+// Lexical Grammars
+
+// keywords
+    "this",             [/this/],
+    "boolean",          [/true/, /false/],
+    "null",             [/null/],
+    "undefined",        [/undefined/],
+
+// unaries
+    "new",              [/new/],
+    "delete",           [/delete/],
+    "typeof",           [/typeof/],
+
+// comparison
+    "gt",               [/gt/],
+    "gte",              [/gte/],
+
+    "lt",               [/lt/],
+    "lte",              [/lte/],
+
+// logical
+    "instanceof",       [/instanceof/],
+    "and",              [/and/],
+    "or",               [/or/],
+    "in",               [/in/],
+
+// literals
+    "string",           [
+                            /\"(\\\"|[^\"])*\"/,
+                            /\'(\\\'|[^\'])*\'/
+                        ],
+
+    "decimal",          [
+                            /[\+\-]?[0-9]+/,
+                            /[\+\-]?\.[0-9]+/,
+                            /[\+\-]?[0-9]+\.[0-9]+/,
+
+                            // with exponent
+                            /[\+\-]?[0-9]+[eE][\+\-]?[0-9]+/,
+                            /[\+\-]?\.[0-9]+[eE][\+\-]?[0-9]+/,
+                            /[\+\-]?[0-9]+\.[0-9]+[eE][\+\-]?[0-9]+/
+                        ],
+
+    "hex",              [/[\+\-]?0[xX][0-9a-fA-F]+/],
+    "octal",            [/[\+\-]?0[oO][0-7]+/],
+                        
+    "binary",           [/[\+\-]?0[bB][01]+/],
+
+    "json_path",        [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
+
+
+    "open_tag",         [/<\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
+    "close_tag",        [/\?\>/],
+
+
+    "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
 
 // Root
     "Joqx",             [
-                            [/<\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/, "Expression", /\?\>/],
+                            ["open_tag", "Expression", "close_tag"],
                             "Expression"
                         ],
 
@@ -13,61 +69,14 @@ module.exports = [
                             "Assignment",
                             "Delete"
                         ],
-
-// Keywords
-    "Keyword",          [
-                            /this/,
-                            /true/,
-                            /false/,
-                            /null/,
-                            /undefined/,
-
-                            // unary
-                            /new/,
-                            /delete/,
-
-                            // binary
-                            /typeof/,
-                            /gt/,
-                            /gte/,
-                            /lt/,
-                            /lte/,
-                            /instanceof/,
-                            /and/,
-                            /or/,
-                            /in/
-                        ],
-
-// Lexical Grammar
-    "String",           [
-                            /\"(\\\"|[^\"])*\"/,
-                            /\'(\\\'|[^\'])*\'/
-                        ],
-
+// Number
     "Number",           [
-                            "Decimal",
-                            "Hex",
-                            "Octal"
+                            "decimal",
+                            "hex",
+                            "octal"
                         ],
 
-    "Decimal",          [
-                            /[\+\-]?[0-9]+/,
-                            /[\+\-]?\.[0-9]+/,
-                            /[\+\-]?[0-9]+\.[0-9]+/,
-                            /[\+\-]?[0-9]+[eE][\+\-]?[0-9]+/,
-                            /[\+\-]?\.[0-9]+[eE][\+\-]?[0-9]+/,
-                            /[\+\-]?[0-9]+\.[0-9]+[eE][\+\-]?[0-9]+/
-                        ],
-
-    "Hex",              [/[\+\-]?0[xX][0-9a-fA-F]+/],
-
-    "Octal",            [/[\+\-]?0[oO][0-7]+/],
-
-    "Binary",           [/[\+\-]?0[bB][01]+/],
-
-    "JsonPath",         [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
-
-// Literals
+// Group
     "Group",            [
                             [/\(/, "Expression", /\)/]
                         ],
@@ -95,8 +104,8 @@ module.exports = [
                         ],
 
     "Property",         [
-                            ["Identifier", /\:/, "Expression"],
-                            ["String", /\:/, "Expression"],
+                            ["identifier", /\:/, "Expression"],
+                            ["string", /\:/, "Expression"],
                             ["Number", /\:/, "Expression"]
                         ],
 
@@ -112,23 +121,22 @@ module.exports = [
                         ],
 
     "Delete",           [
-                            [/delete/, "Updatable"]
+                            ["delete", "Updatable"]
                         ],
 
     "Void",             [
                             [/void\(/, "Expression", /\)/]
                         ],
 // Literal
-    "Identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
-
+   
     "Literal",          [
-                            /this/,
-                            /true/,
-                            /false/,
-                            /null/,
-                            /undefined/,
+                            "this",
+                            "boolean",
+                            "null",
+                            "undefined",
+                            "string",
+
                             "Number",
-                            "String",
                             "Array",
                             "Object",
                             "Void",
@@ -137,13 +145,13 @@ module.exports = [
 
 // Object Member
     "Updatable",        [
-                            "Identifier",
+                            "identifier",
                             ["Primary", "Member"],
                             ["Primary", "Access"]
                         ],
 
     "Access",           [
-                            [/\./, "Identifier"]
+                            [/\./, "identifier"]
                         ],
 
     "Member",           [
@@ -156,8 +164,8 @@ module.exports = [
                         ],
 
     "Instantiate",      [
-                            [/new/, "Updatable"],
-                            [/new/, "Updatable", "Arguments"]
+                            ["new", "Updatable"],
+                            ["new", "Updatable", "Arguments"]
                         ],
 
     "Primary",          [
@@ -171,7 +179,7 @@ module.exports = [
                             "Primary",
                             [/\+\+/, "Updatable"],
                             [/\-\-/, "Updatable"],
-                            [/typeof/, "Primary"],
+                            ["typeof", "Primary"],
                             [/!/, "Primary"]
                         ],
 
@@ -203,19 +211,19 @@ module.exports = [
                             "Additive",
 
                             ["Relational", /</, "Additive"],
-                            ["Relational", /lt/, "Additive"],
+                            ["Relational", "lt", "Additive"],
 
                             ["Relational", /\>/, "Additive"],
-                            ["Relational", /gt/, "Additive"],
+                            ["Relational", "gt", "Additive"],
 
                             ["Relational", /<\=/, "Additive"],
-                            ["Relational", /lte/, "Additive"],
+                            ["Relational", "lte", "Additive"],
 
                             ["Relational", /\>\=/, "Additive"],
-                            ["Relational", /gte/, "Additive"],
+                            ["Relational", "gte", "Additive"],
 
-                            ["Relational", /instanceof/, "Additive"],
-                            ["Relational", /in/, "Additive"]
+                            ["Relational", "instanceof", "Additive"],
+                            ["Relational", "in", "Additive"]
                         ],
 
     "Equality",         [
@@ -231,13 +239,13 @@ module.exports = [
     "LogicalAnd",       [
                             "Equality",
                             ["LogicalAnd", /\&\&/, "Equality"],
-                            ["LogicalAnd", /and/, "Equality"]
+                            ["LogicalAnd", "and", "Equality"]
                         ],
 
     "LogicalOr",        [
                             "LogicalAnd",
                             ["LogicalOr", /\|\|/, "LogicalAnd"],
-                            ["LogicalOr", /or/, "LogicalAnd"]
+                            ["LogicalOr", "or", "LogicalAnd"]
                         ],
 // Ternary
     "Conditional",      [
@@ -253,9 +261,7 @@ module.exports = [
                             ["Updatable", /\/\=/, "Assignment"],
                             ["Updatable", /\%\=/, "Assignment"],
                             ["Updatable", /\+\=/, "Assignment"],
-                            ["Updatable", /\-\=/, "Assignment"],
+                            ["Updatable", /\-\=/, "Assignment"]
                         ]
-
-    
 
 ];

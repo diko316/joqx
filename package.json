@@ -44,7 +44,7 @@
   },
   "optionalDependencies": {
     "libcore": "^0.3.7",
-    "libcore-parser-lalr": "^0.1.1",
+    "libcore-parser-lalr": "^0.1.2",
     "libcore-package-resolver": "^0.0.7"
   }
 }
