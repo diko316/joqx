@@ -4,7 +4,7 @@ import { iterator } from "./index.js";
 
 var p;
 
-iterator.set("?buang !buang ?");
+iterator.set("?buang yes = buang ? 1 : 2 ?");
 
 p = iterator.next();
 
