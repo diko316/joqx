@@ -2,7 +2,8 @@
 
 
 module.exports = [
-    /[ \r\n\t]+/
+    'white_space',
+    'comment'
 ];
 
 

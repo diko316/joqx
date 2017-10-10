@@ -4,7 +4,9 @@ import { iterator } from "./index.js";
 
 var p;
 
-iterator.set("buang = new Diko(1 + 3).property");
+//iterator.set("buang = new Diko(1 + 3).property");
+
+iterator.set("1 + - 3");
 
 p = iterator.next();
 

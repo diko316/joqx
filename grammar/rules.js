@@ -9,11 +9,25 @@ module.exports = [
     "boolean",          [/true/, /false/],
     "null",             [/null/],
     "undefined",        [/undefined/],
+    "then",             [/then/],
 
-// unaries
+// arithmetic operators
+    "+",                [/\+/],
+    "-",                [/\-/],
+    "%",                [/\%/],
+    "*",                [/\*/],
+    "/",                [/\//],
+
+    "++",               [/\+\+/],
+    "--",               [/\-\-/],
+    "**",               [/\*\*/],
+
+// object
     "new",              [/new/],
     "delete",           [/delete/],
     "typeof",           [/typeof/],
+
+    ".",                [/\./],
 
 // comparison
     "gt",               [/gt/],
@@ -22,11 +36,40 @@ module.exports = [
     "lt",               [/lt/],
     "lte",              [/lte/],
 
+    ">=",               [/\>=/],
+    ">",                [/\>/],
+
+    "<=",               [/<=/],
+    "<",                [/</],
+
 // logical
     "instanceof",       [/instanceof/],
     "and",              [/and/],
     "or",               [/or/],
     "in",               [/in/],
+
+    "&&",               [/\&\&/],
+    "||",               [/\|\|/],
+    "!",                [/!/],
+
+
+    "?",                [/\?/],
+    ":",                [/\:/],
+
+// equality
+    "==",               [/==/],
+    "!=",               [/!=/],
+    "===",              [/===/],
+    "!==",              [/!==/],
+
+//  assignment
+    "=",                [/=/],
+    "**=",              [/\*\*=/],
+    "*=",               [/\*=/],
+    "/=",               [/\/=/],
+    "%=",               [/\%=/],
+    "+=",               [/\+=/],
+    "-=",               [/\-=/],
 
 // literals
     "string",           [
@@ -35,14 +78,14 @@ module.exports = [
                         ],
 
     "decimal",          [
-                            /[\+\-]?[0-9]+/,
-                            /[\+\-]?\.[0-9]+/,
-                            /[\+\-]?[0-9]+\.[0-9]+/,
+                            /[0-9]+/,
+                            /\.[0-9]+/,
+                            /[0-9]+\.[0-9]+/,
 
                             // with exponent
-                            /[\+\-]?[0-9]+[eE][\+\-]?[0-9]+/,
-                            /[\+\-]?\.[0-9]+[eE][\+\-]?[0-9]+/,
-                            /[\+\-]?[0-9]+\.[0-9]+[eE][\+\-]?[0-9]+/
+                            /[0-9]+[eE][\+\-]?[0-9]+/,
+                            /\.[0-9]+[eE][\+\-]?[0-9]+/,
+                            /[0-9]+\.[0-9]+[eE][\+\-]?[0-9]+/
                         ],
 
     "hex",              [/[\+\-]?0[xX][0-9a-fA-F]+/],
@@ -52,16 +95,34 @@ module.exports = [
 
     "json_path",        [/\@[^ \r\n\t\.\[]+(\.[^ \r\n\t\.\[]+|\[\'(\\\'|[^\'])+\'\]|\[\"(\\\"|[^\"])+\"\]|\[[^\]]+\])*/],
 
+// enclosures
+    "[",                [/\[/],
+    "]",                [/\]/],
+    "{",                [/\{/],
+    "}",                [/\}/],
+    "(",                [/\(/],
+    ")",                [/\)/],
+    ",",                [/\,/],
 
-    "open_tag",         [/<\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
-    "close_tag",        [/\?\>/],
+    "comment",          [
+                            /\/\/[^ \n]*/,
+                            /\#[^ \n]*/
+                        ],
 
+    "white_space",      [
+                            /[ \r\n\t]+/
+                        ],
+    
+        
+    "void(",            [/void\(/],
+
+    "intent",           [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
 
     "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
 
-// Root
+// Root Expression
     "Joqx",             [
-                            ["open_tag", "Expression", "close_tag"],
+                            ["intent", "Expression"],
                             "Expression"
                         ],
 
@@ -78,46 +139,46 @@ module.exports = [
 
 // Group
     "Group",            [
-                            [/\(/, "Expression", /\)/]
+                            ["(", "Expression", ")"]
                         ],
 
 // Array
     "Array",            [
-                            [/\[/, /\]/],
-                            [/\[/, "Elements", /\]/]
+                            ["[", "]"],
+                            ["[", "Elements", "]"]
                         ],
 
     "Elements",         [
                             "Expression",
-                            ["Elements", /\,/, "Expression"],
+                            ["Elements", ",", "Expression"],
                         ],
 
 // Object
     "Object",           [
-                            [/\{/, /\}/],
-                            [/\{/, "Properties", /\}/]
+                            ["{", "}"],
+                            ["{", "Properties", "}"]
                         ],
 
     "Properties",       [
                             "Property",
-                            ["Properies", /\,/, "Property"]
+                            ["Properies", ",", "Property"]
                         ],
 
     "Property",         [
-                            ["identifier", /\:/, "Expression"],
-                            ["string", /\:/, "Expression"],
-                            ["Number", /\:/, "Expression"]
+                            ["identifier", ":", "Expression"],
+                            ["string", ":", "Expression"],
+                            ["Number", ":", "Expression"]
                         ],
 
 // Function Call
     "Arguments",        [
-                            [/\(/, /\)/],
-                            [/\(/, "ArgumentList", /\)/]
+                            ["(", ")"],
+                            ["(", "ArgumentList", ")"]
                         ],
 
     "ArgumentList",     [
                             "Expression",
-                            ["ArgumentList", /\,/, "Expression"]
+                            ["ArgumentList", ",", "Expression"]
                         ],
 
     "Delete",           [
@@ -125,7 +186,7 @@ module.exports = [
                         ],
 
     "Void",             [
-                            [/void\(/, "Expression", /\)/]
+                            ["void(", "Expression", ")"]
                         ],
 // Literal
    
@@ -151,11 +212,11 @@ module.exports = [
                         ],
 
     "Access",           [
-                            [/\./, "identifier"]
+                            [".", "identifier"]
                         ],
 
     "Member",           [
-                            [/\[/, "Expression", /\]/]
+                            ["[", "Expression", "]"]
                         ],
 
 // Function Call
@@ -175,51 +236,54 @@ module.exports = [
                             "Call"
                         ],
 
-    "PreUnary",         [
+    "PostFix",          [
                             "Primary",
-                            [/\+\+/, "Updatable"],
-                            [/\-\-/, "Updatable"],
-                            ["typeof", "Primary"],
-                            [/!/, "Primary"]
+                            ["Updatable", "++"],
+                            ["Updatable", "--"]
+                            
                         ],
 
     "Unary",            [
-                            "PreUnary",
-                            ["Updatable", /\+\+/],
-                            ["Updatable", /\-\-/]
+                            "PostFix",
+                            ["++", "Updatable"],
+                            ["--", "Updatable"],
+                            ["+",  "Number"],
+                            ["-", "Number"],
+                            ["typeof", "Primary"],
+                            ["!", "Primary"]
                         ],
 
     "Exponential",      [
                             "Unary",
-                            ["Exponential", /\*\*/, "Unary"]
+                            ["Exponential", "**", "Unary"]
                         ],
 
     "Multiplicative",   [
                             "Exponential",
-                            ["Multiplicative", /\*/, "Exponential"],
-                            ["Multiplicative", /\//, "Exponential"],
-                            ["Multiplicative", /\%/, "Exponential"]
+                            ["Multiplicative", "*", "Exponential"],
+                            ["Multiplicative", "/", "Exponential"],
+                            ["Multiplicative", "%", "Exponential"]
                         ],
 
     "Additive",         [
                             "Multiplicative",
-                            ["Additive", /\-/, "Multiplicative"],
-                            ["Additive", /\+/, "Multiplicative"]
+                            ["Additive", "-", "Multiplicative"],
+                            ["Additive", "+", "Multiplicative"]
                         ],
 
     "Relational",       [
                             "Additive",
 
-                            ["Relational", /</, "Additive"],
+                            ["Relational", "<", "Additive"],
                             ["Relational", "lt", "Additive"],
 
-                            ["Relational", /\>/, "Additive"],
+                            ["Relational", ">", "Additive"],
                             ["Relational", "gt", "Additive"],
 
-                            ["Relational", /<\=/, "Additive"],
+                            ["Relational", "<=", "Additive"],
                             ["Relational", "lte", "Additive"],
 
-                            ["Relational", /\>\=/, "Additive"],
+                            ["Relational", ">=", "Additive"],
                             ["Relational", "gte", "Additive"],
 
                             ["Relational", "instanceof", "Additive"],
@@ -229,39 +293,39 @@ module.exports = [
     "Equality",         [
                             "Relational",
 
-                            ["Equality", /\=\=/, "Relational"],
-                            ["Equality", /!\=/, "Relational"],
-                            ["Equality", /\=\=\=/, "Relational"],
-                            ["Equality", /!\=\=/, "Relational"]
+                            ["Equality", "==", "Relational"],
+                            ["Equality", "!=", "Relational"],
+                            ["Equality", "===", "Relational"],
+                            ["Equality", "!==", "Relational"]
                             
                         ],
 
     "LogicalAnd",       [
                             "Equality",
-                            ["LogicalAnd", /\&\&/, "Equality"],
+                            ["LogicalAnd", "&&", "Equality"],
                             ["LogicalAnd", "and", "Equality"]
                         ],
 
     "LogicalOr",        [
                             "LogicalAnd",
-                            ["LogicalOr", /\|\|/, "LogicalAnd"],
+                            ["LogicalOr", "||", "LogicalAnd"],
                             ["LogicalOr", "or", "LogicalAnd"]
                         ],
 // Ternary
     "Conditional",      [
                             "LogicalOr",
-                            ["LogicalOr", /\?/, "Expression", /\:/, "Expression"]
+                            ["LogicalOr", "?", "Expression", ":", "Expression"]
                         ],
 
     "Assignment",       [
                             "Conditional",
-                            ["Updatable", /\=/, "Assignment"],
-                            ["Updatable", /\*\*\=/, "Assignment"],
-                            ["Updatable", /\*\=/, "Assignment"],
-                            ["Updatable", /\/\=/, "Assignment"],
-                            ["Updatable", /\%\=/, "Assignment"],
-                            ["Updatable", /\+\=/, "Assignment"],
-                            ["Updatable", /\-\=/, "Assignment"]
+                            ["Updatable", "=", "Assignment"],
+                            ["Updatable", "**=", "Assignment"],
+                            ["Updatable", "*=", "Assignment"],
+                            ["Updatable", "/=", "Assignment"],
+                            ["Updatable", "%=", "Assignment"],
+                            ["Updatable", "+=", "Assignment"],
+                            ["Updatable", "-=", "Assignment"]
                         ]
 
 ];
