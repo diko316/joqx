@@ -1,18 +1,24 @@
 'use strict';
 
-import { iterator } from "./index.js";
+import { compile } from "./index.js";
 
-var p;
 
-//iterator.set("buang = new Diko(1 + 3).property");
+compile('buang.property');
 
-iterator.set("1 + - 3");
+// var p;
 
-p = iterator.next();
+// //iterator.set("buang = new Diko(1 + 3).property");
 
-for (; p; p = iterator.next()) {
-    console.log(p.name, p.value);
-}
+// iterator.set("1 + a.b");
+
+// p = iterator.next();
+
+// for (; p; p = iterator.next()) {
+    
+//     console.log(p.name, p.value);
+
+// }
+// console.log(iterator);
 
 
 

@@ -9,7 +9,9 @@ module.exports = [
     "boolean",          [/true/, /false/],
     "null",             [/null/],
     "undefined",        [/undefined/],
-    "then",             [/then/],
+
+// transformer
+    "transform",        [/\-\>/],
 
 // arithmetic operators
     "+",                [/\+/],
@@ -122,14 +124,10 @@ module.exports = [
 
 // Root Expression
     "Joqx",             [
-                            ["intent", "Expression"],
-                            "Expression"
+                            "Transform",
+                            ["intent", "Transform"],
                         ],
-
-    "Expression",       [
-                            "Assignment",
-                            "Delete"
-                        ],
+    
 // Number
     "Number",           [
                             "decimal",
@@ -139,7 +137,7 @@ module.exports = [
 
 // Group
     "Group",            [
-                            ["(", "Expression", ")"]
+                            ["(", "Javascript", ")"]
                         ],
 
 // Array
@@ -149,8 +147,8 @@ module.exports = [
                         ],
 
     "Elements",         [
-                            "Expression",
-                            ["Elements", ",", "Expression"],
+                            "Javascript",
+                            ["Elements", ",", "Javascript"],
                         ],
 
 // Object
@@ -165,9 +163,9 @@ module.exports = [
                         ],
 
     "Property",         [
-                            ["identifier", ":", "Expression"],
-                            ["string", ":", "Expression"],
-                            ["Number", ":", "Expression"]
+                            ["identifier", ":", "Javascript"],
+                            ["string", ":", "Javascript"],
+                            ["Number", ":", "Javascript"]
                         ],
 
 // Function Call
@@ -177,8 +175,8 @@ module.exports = [
                         ],
 
     "ArgumentList",     [
-                            "Expression",
-                            ["ArgumentList", ",", "Expression"]
+                            "Javascript",
+                            ["ArgumentList", ",", "Javascript"]
                         ],
 
     "Delete",           [
@@ -186,7 +184,7 @@ module.exports = [
                         ],
 
     "Void",             [
-                            ["void(", "Expression", ")"]
+                            ["void(", "Javascript", ")"]
                         ],
 // Literal
    
@@ -207,16 +205,8 @@ module.exports = [
 // Object Member
     "Updatable",        [
                             "identifier",
-                            ["Primary", "Member"],
-                            ["Primary", "Access"]
-                        ],
-
-    "Access",           [
-                            [".", "identifier"]
-                        ],
-
-    "Member",           [
-                            ["[", "Expression", "]"]
+                            ["Primary", ".", "identifier"],
+                            ["Primary", "[", "Javascript", "]"]
                         ],
 
 // Function Call
@@ -314,8 +304,9 @@ module.exports = [
 // Ternary
     "Conditional",      [
                             "LogicalOr",
-                            ["LogicalOr", "?", "Expression", ":", "Expression"]
+                            ["LogicalOr", "?", "Javascript", ":", "Javascript"]
                         ],
+
 
     "Assignment",       [
                             "Conditional",
@@ -326,6 +317,29 @@ module.exports = [
                             ["Updatable", "%=", "Assignment"],
                             ["Updatable", "+=", "Assignment"],
                             ["Updatable", "-=", "Assignment"]
+                        ],
+
+    "Javascript",       [
+                            "Assignment",
+                            "Delete"
+                        ],
+
+// Transform Redirection
+    "Namespace",        [
+                            "identifier",
+                            ["Namespace", ".", "identifier"],
+                            ["Namespace", "[", "Javascript", "]"]
+                        ],
+
+    "Transformer",      [
+                            "Namespace",
+                            ["Namespace", "Arguments"]
+                        ],
+
+    "Transform",        [
+                            "Javascript",
+                            ["Transform", "transform", "Transformer"]
                         ]
+
 
 ];

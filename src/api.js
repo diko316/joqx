@@ -1,5 +1,5 @@
 'use strict';
 
 // test
-export * from "./parser/index.js";
+export { default as compile } from "./compile.js";
 
