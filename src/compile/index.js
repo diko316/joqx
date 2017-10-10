@@ -32,4 +32,12 @@ export * from "./rule/conditional.js";
 
 export * from "./rule/assignment.js";
 
+export * from "./rule/namespace.js";
+
+export * from "./rule/transformer.js";
+
 export * from "./rule/transform.js";
+
+export * from "./rule/arguments.js";
+
+export * from "./rule/argumentlist.js";

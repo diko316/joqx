@@ -327,8 +327,7 @@ module.exports = [
 // Transform Redirection
     "Namespace",        [
                             "identifier",
-                            ["Namespace", ".", "identifier"],
-                            ["Namespace", "[", "Javascript", "]"]
+                            ["Namespace", ".", "identifier"]
                         ],
 
     "Transformer",      [

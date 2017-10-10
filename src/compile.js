@@ -43,7 +43,9 @@ function compile(subject) {
         
     }
 
-    console.log(context);
+    console.log(context.generate());
+
+
 
 }
 
