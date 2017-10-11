@@ -3,7 +3,7 @@
 import { compile } from "./index.js";
 
 
-compile('buang -> test(1)');
+compile('buang.shit.ka -> test(1)');
 
 
 

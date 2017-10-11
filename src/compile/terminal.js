@@ -1,7 +1,7 @@
 'use strict';
 
 
-function handlerTerminal(context, lexeme) {
+function compileTerminal(context, lexeme) {
     var cache = lexeme.value,
         value = cache;
 
@@ -28,4 +28,4 @@ function handlerTerminal(context, lexeme) {
 
 
 // identifier
-export default handlerTerminal;
+export default compileTerminal;

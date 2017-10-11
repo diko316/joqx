@@ -1,28 +1,38 @@
 'use strict';
 
+import {
+            string,
+            array
+        } from "libcore";
+
 export
     class Compile {
         constructor(iterator) {
-            var current = {
-                    lexemeSymbols: {},
-                    symbols: [],
-                    code: []
-                };
 
             this.contextSymbol = '$';
+            this.symbols = [];
+            this.code = [];
             this.iterator = iterator;
-            this.contexts = [this.current = current];
+
+            this.lineFeed = "\n";
+            
         }
 
         createSymbol(value) {
-            var current = this.current,
-                symbols = current.symbols,
-                lexemes = current.lexemeSymbols,
+            var symbols = this.symbols,
+                code = this.code,
                 index = symbols.length,
                 id = 's' + index;
 
-            lexemes[id] = value;
             symbols[index] = id;
+
+            if (array(value)) {
+                value = value.join('');
+            }
+            
+            if (string(value)) {
+                code[code.length] = id + ' = ' + value;
+            }
 
             return id;
         }
@@ -31,59 +41,44 @@ export
             this.iterator.update(value);
         }
 
-        appendCode(codes) {
-            var list = this.current.code;
+        appendCode() {
+            var list = this.code,
+                len = list.length,
+                args = arguments,
+                c = -1,
+                l = args.length,
+                isString = string,
+                isArray = array;
+
+            var item;
+
+            for (; l--;) {
+                item = args[++c];
+                if (isArray(item)) {
+                    item = item.join('');
+                }
+                else if (!isString(item)) {
+                    continue;
+                }
+
+                list[len++] = item;
+            }
 
             list.push.apply(list, codes);
 
         }
 
         generate() {
-            var contexts = this.contexts,
-                compiled = [],
-                lines = 0,
-                c = -1,
-                l = contexts.length;
-            var context, symbols, symbol, sc, sl, lexemeSymbols, value,
-                vars, vl, codes, cl;
-
-            for (; l--;) {
-                context = contexts[++c];
-
-                codes = context.code;
-
-                // generat variables
-                lexemeSymbols = context.lexemeSymbols;
-
-                symbols = context.symbols;
-                sc = -1;
-                sl = symbols.length;
-                vars = [];
-                vl = 0;
-
-
-                for (; sl--;) {
-                    symbol = symbols[++sc];
-                    value = lexemeSymbols[symbol];
-
-                    vars[vl++] = symbol + ( value ?
-                                             '=' + value : '');
-                }
-
-                if (vl) {
-                    codes.splice(0, 0,
-                        'var ' + vars.join(',\n')
-                    );
-                }
-
-                if (codes.length) {
-                    compiled[lines++] = codes.join(';\n') + ';';
-                }
-                
+            var symbols = this.symbols,
+                code = this.code.slice(0);
+           
+            // declare variables
+            if (symbols.length) {
+                code.splice(0, 0, 'var ' + symbols.join(','));
             }
-            
-            return compiled.join("\n");
 
+            return code.length ?
+                        code.join(';' + this.lineFeed) + ";" : "";
         }
     }
 
