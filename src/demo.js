@@ -3,8 +3,16 @@
 import { compile } from "./index.js";
 
 
-compile('buang.shit.ka -> test(1)');
+var compiled = compile('buang[test] += 1');
 
+
+
+console.log("result: ", compiled({
+                            "buang": {
+                                "yes": 2
+                            },
+                            "test": "yes"
+                        }));
 
 
 

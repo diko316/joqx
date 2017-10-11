@@ -211,12 +211,12 @@ module.exports = [
 
 // Function Call
     "Call",             [
-                            ["Updatable", "Arguments"]
+                            ["Primary", "Arguments"]
                         ],
 
     "Instantiate",      [
-                            ["new", "Updatable"],
-                            ["new", "Updatable", "Arguments"]
+                            ["new", "Primary"],
+                            ["new", "Primary", "Arguments"]
                         ],
 
     "Primary",          [

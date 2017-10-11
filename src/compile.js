@@ -4,16 +4,23 @@ import { iterator } from "./parser/index.js";
 
 import { Compile } from "./compile/class.js";
 
+import { Context } from "./context/class.js";
+
 import handleTerminal from "./compile/terminal.js";
 
 import handleRule from "./compile/rule.js";
 
 function compile(subject) {
-    var context = new Compile(iterator),
+    var F = compile.constructor,
+        context = new Compile(iterator),
         compileTerminal = handleTerminal,
         compileRule = handleRule;
 
-    var lexeme;
+    var lexeme, compiled, generated;
+
+    function exec(contextObject) {
+        return compiled(new Context(), contextObject);
+    }
 
     var value;
 
@@ -34,9 +41,17 @@ function compile(subject) {
         
     }
 
-    console.log(context.generate());
+    generated = context.generate();
 
+    console.log(generated);
 
+    compiled = new F('helper, context', generated);
+
+    
+
+    console.log("compiled ", compiled.toString());
+
+    return exec;
 
 }
 

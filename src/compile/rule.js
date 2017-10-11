@@ -1,19 +1,26 @@
 'use strict';
 
+import {
+            createReference,
+            assign
+        } from "./helper/accessor.js";
+
+
 export
     function compileRule(context, lexeme) {
         var cache = lexeme.value,
             value = cache,
-            contextSymbol = context.contextSymbol;
+            contextVar = context.contextSymbol,
+            helperVar = context.helperSymbol;
 
-        var symbol, callback, callArguments;
+        var id, target, symbol, callback, callArguments;
         
         switch (lexeme.name) {
         // relay all
         case "Number":
         case "Literal":
-        case "Primary":
         case "Javascript":
+        case "Primary":
             value = value[0];
             break;
 
@@ -39,15 +46,24 @@ export
 
             // updatable member
             case "1:Updatable":
-                value = contextSymbol + '.' + value[0];
+                value = createReference(context,
+                                        null,
+                                        value[0],
+                                        false);
                 break;
     
             case "2:Updatable":
-                value = value[0] + '.' + value[2];
+                value = createReference(context,
+                                        context.getSymbol(value[0]),
+                                        value[2],
+                                        false);
                 break;
 
             case "3:Updatable":
-                value = value[0] + '[' + value[2] + ']';
+                value = createReference(context,
+                                        context.getSymbol(value[0]),
+                                        value[2],
+                                        true);
                 break;
             
             // arguments
@@ -76,7 +92,8 @@ export
             case "6:Assignment":
             case "7:Assignment":
             case "8:Assignment":
-                // ensure that Updatetable path exists
+                value = assign(context, value[1], value[0], value[2]);
+
                 break;
 
             // transformer
@@ -86,15 +103,15 @@ export
             /* falls through */
             case "1:Transformer": // relay
                 value = [context.
-                            createSymbol([contextSymbol,
-                                        '.getTransformer(', value[0], ')']),
+                            createSymbol([helperVar,
+                                        '.getTransformer("', value[0], '")']),
                             lexeme.callArguments || []];
                 break;
 
             // transform
             case "2:Transform":
                 callback = value[2];
-                callArguments = [contextSymbol, value[0]].
+                callArguments = [helperVar, value[0]].
                                     concat(callback[1]).
                                     join(',');
                 callback = callback[0];
@@ -102,6 +119,13 @@ export
                 value = context.createSymbol([callback, ' ? ',
                                 callback, '(', callArguments, ') : undefined']);
                 break;
+
+            // last
+            case "1:Joqx":
+                value = value[0];
+                context.appendCode([
+                    'return ', value
+                ]);
             }
         }
 
