@@ -6,6 +6,8 @@ import {
             contains
         } from "libcore";
 
+import { instantiate } from "./symbol.js";
+
 export
     class Compile {
         constructor(iterator) {
@@ -29,62 +31,22 @@ export
         }
 
         createSymbol(value, type, constantify) {
-            var symbols = this.symbols,
-                configs = this.symbolConfig,
-                code = this.code,
-                isString = string,
-                index = symbols.length,
-                id = 's' + index,
-                config = {
-                    id: id,
-                    type: this.defaultSymbolType,
-                    constant: constantify = constantify === true,
-                    value: null
-                };
+            var symbol = instantiate(type, this);
 
-            if (constantify === true) {
-                symbols.splice(0, 0, id);
-            }
-            else {
-                symbols[index] = id;
-            }
+            symbol.initialize(value, constantify);
 
-            configs[id] = config;
-
-            if (isString(type)) {
-                config.type = type;
-            }
-
-            if (array(value)) {
-                value = value.join('');
-            }
-            
-            if (isString(value)) {
-                config.value = value;
-
-                if (!constantify) {
-                    code[code.length] = id + ' = ' + value;
-                }
-            }
-
-            return id;
+            return symbol.id;
         }
 
         createConstant(value, type) {
-            var lookup = this.constantLookup,
-                configs = this.symbolConfig;
-            var id, config;
+            var lookup = this.constantLookup;
+            
 
             if (contains(lookup, value)) {
                 return lookup[value].id;
             }
             
-            id = this.createSymbol(value, type, true);
-            config = configs[id];
-            lookup[value] = config;
-            config.constant = true;
-
-            return id;
+            return this.createSymbol(value, type, true);
             
         }
 

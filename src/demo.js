@@ -3,17 +3,19 @@
 import { compile } from "./index.js";
 
 
-var compiled = compile('buang[test] += 1');
+//var compiled = compile('buang[test] += 1');
 
 
 
-console.log("result: ", compiled({
-                            "buang": {
-                                "yes": 2
-                            },
-                            "test": "yes"
-                        }));
+// console.log("result: ", compiled({
+//                             "buang": {
+//                                 "yes": 2
+//                             },
+//                             "test": "yes"
+//                         }));
 
+
+compile('buang[a.test]');
 
 
 

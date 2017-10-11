@@ -5,6 +5,10 @@ import {
             assign
         } from "./helper/accessor.js";
 
+import {
+            createArgumentSymbol,
+        } from "./helper/argument.js";
+
 
 export
     function compileRule(context, lexeme) {
@@ -13,7 +17,7 @@ export
             contextVar = context.contextSymbol,
             helperVar = context.helperSymbol;
 
-        var id, target, symbol, callback, callArguments;
+        var callback, callArguments;
         
         switch (lexeme.name) {
         // relay all
@@ -68,7 +72,9 @@ export
             
             // arguments
             case "1:Arguments": // relay
-                value = [];
+                value = createArgumentSymbol(context,
+                                            null,
+                                            null);
                 break;
 
             case "2:Arguments": // relay
@@ -76,11 +82,20 @@ export
                 break;
 
             case "1:ArgumentList":
-                value = [value[0]];
+                value = createArgumentSymbol(context,
+                                            null,
+                                            value[0]);
                 break;
 
             case "2:ArgumentList":
-                value = value[0].concat([value[2]]);
+                value = createArgumentSymbol(context,
+                                            value[0],
+                                            value[2]);
+                break;
+
+
+            case "1:Call":
+                
                 break;
 
 

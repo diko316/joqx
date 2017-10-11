@@ -45,11 +45,8 @@ function compile(subject) {
 
     console.log(generated);
 
-    compiled = new F('helper, context', generated);
-
-    
-
-    console.log("compiled ", compiled.toString());
+    //compiled = new F('helper, context', generated);
+    //console.log("compiled ", compiled.toString());
 
     return exec;
 

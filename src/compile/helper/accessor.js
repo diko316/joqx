@@ -167,7 +167,7 @@ export
         }
 
         return context.createSymbol([
-                        context.helperSymbol, '.assign(',
+                        context.helperSymbol, '.set(',
                             reference, ',',
                             pathArray, ',',
                             value, ')'

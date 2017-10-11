@@ -31,7 +31,7 @@ Context.prototype = {
         return string(property) || number(property);
     },
 
-    assign: function (subject, paths, value) {
+    set: function (subject, paths, value) {
 
         jsonFill(this.createJsonPath(paths), subject, value);
 
