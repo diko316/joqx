@@ -115,6 +115,25 @@ Symbol.prototype = {
         return this;
     },
 
+    typeofSymbol: function () {
+        return this.createVariableOfMe('typeof ' + this.id);
+    },
+
+    createVariableOfMe: function (value) {
+        var identifier;
+
+        if (!string(value)) {
+            value = this.id;
+        }
+
+        identifier = this.compiler.createSymbol(value, "identifier");
+        identifier.symbolAccess = true;
+        identifier.reference = this;
+
+        return identifier;
+
+    },
+
     getDeclarationValue: function () {
         return this.getCodeValue();
     },
@@ -159,6 +178,8 @@ Symbol.prototype = {
         }
         return this.declare();
     }
+
+
 };
 
 export default Symbol;

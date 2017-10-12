@@ -15,7 +15,7 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('true');
+compile('typeof diko');
 
 
 

@@ -26,6 +26,7 @@ function compile(subject) {
 
     iterator.set(subject);
     lexeme = iterator.next();
+    console.log('first! ', lexeme);
 
     for (; lexeme; lexeme = iterator.next()) {
 

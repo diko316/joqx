@@ -105,18 +105,17 @@ export
             
             // positive sign
             case "4:Unary":
-                console.log("positive!");
                 value = value[1].positive(false);
                 break;
 
             // negative sign
             case "5:Unary":
-                console.log("negative!");
                 value = value[1].negative(false);
                 break;
 
             // typeof
             case "6:Unary":
+                value = value[1].typeofSymbol();
                 break;
 
 

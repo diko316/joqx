@@ -3,7 +3,7 @@
 module.exports = [
 
 // Lexical Grammars
-    "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
+    
 
 // keywords
     "this",             [/this/],
@@ -17,14 +17,13 @@ module.exports = [
     "new",              [/new/],
     "delete",           [/delete/],
     "typeof",           [/typeof/],
-
-    "instanceof",       [/instanceof/],
-    "and",              [/and/],
-    "or",               [/or/],
-    "in",               [/in/],
+    
 
 // transformer
-    "transform",        [/\-\>/],
+    "transform",        [
+                            /\-\>/,
+                            /then/
+                        ],
 
 // arithmetic operators
     "++",               [/\+\+/],
@@ -41,6 +40,11 @@ module.exports = [
     ".",                [/\./],
 
 // comparison
+    "instanceof",       [/instanceof/],
+    "and",              [/and/],
+    "or",               [/or/],
+    "in",               [/in/],
+
     "gt",               [/gt/],
     "gte",              [/gte/],
 
@@ -125,6 +129,9 @@ module.exports = [
     "void(",            [/void\(/],
 
     "intent",           [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
+
+// last priority
+    "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
 
     
 

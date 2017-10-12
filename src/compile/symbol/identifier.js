@@ -16,10 +16,23 @@ export default
                 this.symbolAccess =
                 this.finalizeOnAccess = false;
 
-            this.accessParent = null;
+            this.reference =
+                this.accessParent = null;
 
+            
             this.allowAccess = 
                 this.allowAccessUpdate = true;
+
+        }
+
+        onDeclare() {
+            var reference = this.reference;
+
+            if (reference) {
+                reference.finalize();
+            }
+
+            super.onDeclare();
 
         }
 
