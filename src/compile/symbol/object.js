@@ -1,10 +1,12 @@
 'use strict';
 
 
-import Base from "./base.js";
+import Base from "./native.js";
 
 
 export default
     class ObjectSymbol extends Base {
+        
+
         
     }

@@ -1,23 +1,19 @@
 'use strict';
 
-import {
-            createReference,
-            assign
-        } from "./helper/accessor.js";
+// import {
+//             createReference,
+//             assign
+//         } from "./helper/accessor.js";
 
-import {
-            createArgumentSymbol,
-        } from "./helper/argument.js";
+// import {
+//             createArgumentSymbol,
+//         } from "./helper/argument.js";
 
 
 export
-    function compileRule(context, lexeme) {
+    function compileRule(compiler, lexeme) {
         var cache = lexeme.value,
-            value = cache,
-            contextVar = context.contextSymbol,
-            helperVar = context.helperSymbol;
-
-        var callback, callArguments;
+            value = cache;
         
         switch (lexeme.name) {
         // relay all
@@ -49,48 +45,57 @@ export
                 break;
 
             // updatable member
+            
+                // value = createReference(context,
+                //                         null,
+                //                         value[0],
+                //                         false);
+                //break;
+                
+            // direct access is a property of context symbol
             case "1:Updatable":
-                value = createReference(context,
-                                        null,
-                                        value[0],
-                                        false);
+                value = value[0].access(compiler.contextSymbol, '.');
                 break;
-    
+
             case "2:Updatable":
-                value = createReference(context,
-                                        context.getSymbol(value[0]),
-                                        value[2],
-                                        false);
+                value = value[2].access(value[0], value[1]);
+                
+
+                // value = createReference(context,
+                //                         context.getSymbol(value[0]),
+                //                         value[2],
+                //                         false);
                 break;
 
             case "3:Updatable":
-                value = createReference(context,
-                                        context.getSymbol(value[0]),
-                                        value[2],
-                                        true);
+                value = value[2].access(value[0], value[1] + value[3]);
+                // value = createReference(context,
+                //                         context.getSymbol(value[0]),
+                //                         value[2],
+                //                         true);
                 break;
             
             // arguments
             case "1:Arguments": // relay
-                value = createArgumentSymbol(context,
-                                            null,
-                                            null);
+                // value = createArgumentSymbol(context,
+                //                             null,
+                //                             null);
                 break;
 
             case "2:Arguments": // relay
-                value = value[1];
+                //value = value[1];
                 break;
 
             case "1:ArgumentList":
-                value = createArgumentSymbol(context,
-                                            null,
-                                            value[0]);
+                // value = createArgumentSymbol(context,
+                //                             null,
+                //                             value[0]);
                 break;
 
             case "2:ArgumentList":
-                value = createArgumentSymbol(context,
-                                            value[0],
-                                            value[2]);
+                // value = createArgumentSymbol(context,
+                //                             value[0],
+                //                             value[2]);
                 break;
 
 
@@ -107,7 +112,7 @@ export
             case "6:Assignment":
             case "7:Assignment":
             case "8:Assignment":
-                value = assign(context, value[1], value[0], value[2]);
+                //value = assign(context, value[1], value[0], value[2]);
 
                 break;
 
@@ -117,36 +122,36 @@ export
             
             /* falls through */
             case "1:Transformer": // relay
-                value = [context.
-                            createSymbol([helperVar,
-                                        '.getTransformer("', value[0], '")']),
-                            lexeme.callArguments || []];
+                // value = [context.
+                //             createSymbol([helperVar,
+                //                         '.getTransformer("', value[0], '")']),
+                //             lexeme.callArguments || []];
                 break;
 
             // transform
             case "2:Transform":
-                callback = value[2];
-                callArguments = [helperVar, value[0]].
-                                    concat(callback[1]).
-                                    join(',');
-                callback = callback[0];
+                // callback = value[2];
+                // callArguments = [helperVar, value[0]].
+                //                     concat(callback[1]).
+                //                     join(',');
+                // callback = callback[0];
 
-                value = context.createSymbol([callback, ' ? ',
-                                callback, '(', callArguments, ') : undefined']);
+                // value = context.createSymbol([callback, ' ? ',
+                //                 callback, '(', callArguments, ') : undefined']);
                 break;
 
             // last
             case "1:Joqx":
-                value = value[0];
-                context.appendCode([
-                    'return ', value
-                ]);
+                // value = value[0];
+                // context.appendCode([
+                //     'return ', value
+                // ]);
             }
         }
 
         // update lexeme value
         if (cache !== value) {
-            context.updateIterator(value);
+            compiler.updateIterator(value);
         }
     }
 

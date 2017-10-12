@@ -2,8 +2,8 @@
 
 import {
             string,
-            array,
-            boolean
+            array
+            
         } from "libcore";
 
 function Symbol(compiler) {
@@ -14,10 +14,13 @@ Symbol.prototype = {
     constructor: Symbol,
     id: null,
     
+    autoDeclare: false,
     declared: false,
+    value: null,
     declareCode: null,
 
     autoFinalize: false,
+    finalizeCode: null,
     constant: false,
 
     finalized: false,
@@ -32,6 +35,7 @@ Symbol.prototype = {
 
         // register
         this.constant = constantify;
+        this.value = value;
 
         if (constantify) {
             symbols.splice(0, 0, id);
@@ -42,28 +46,10 @@ Symbol.prototype = {
 
         compiler.symbolConfig[id] = this;
 
-        if (array(value)) {
-            value = value.join('');
-        }
-        
-        if (string(value)) {
-            this.declareCode = value;
-
-            if (constantify) {
-                compiler.constantLookup[value] = id;
-            }
-        }
-
-
     },
 
-    onDeclare: function (compiler) {
-        var code = this.declareCode;
-
-        if (code) {
-            compiler.appendCode(this.id + ' = ' + code);
-        }
-        
+    onDeclare: function () {
+        this.declareCode = this.value;
     },
 
     onFinalize: function () {
@@ -79,25 +65,63 @@ Symbol.prototype = {
                                 constantify === true || constantify === false ?
                                     constantify : this.constant);
 
-            if (this.constant) {
+            if (this.autoDeclare) {
                 this.declare();
+            }
+
+            if (this.autoFinalize) {
+                this.finalize();
             }
         }
     },
 
     declare: function () {
+        var compiler = this.compiler;
+        var value;
+
         if (!this.declared) {
             this.declared = true;
 
-            this.onDeclare(this.compiler);
+            this.onDeclare(compiler, this.value);
+
+            value = this.declareCode;
+
+            if (array(value)) {
+                this.declareCode = value = value.join('');
+            }
+            
+            // declare!
+            if (string(value)) {
+                compiler.appendCode(this.id + ' = ' + value);
+            }
         }
 
     },
 
     finalize: function () {
+        var compiler = this.compiler,
+            isArray = array,
+            isString = string;
+        var value, c, l, item;
+
         if (!this.finalized) {
             this.finalized = true;
+            this.declare();
             this.onFinalize(this.compiler);
+
+            value = this.finalizeCode;
+            if (isString(value)) {
+                value = [[value]];
+            }
+
+            if (isArray(value)) {
+                for (c = -1, l = value.length; l--;) {
+                    item = value[++c];
+                    if (isArray(item) || isString(item)) {
+                        compiler.appendCode(item);
+                    }
+                }
+            }
         }
     }
 };

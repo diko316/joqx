@@ -9,35 +9,27 @@ function compileTerminal(context, lexeme) {
 
     switch (lexeme.name) {
     case "decimal":
-        value = context.createConstant(value, TYPE_NUMBER);
+        value = context.createSymbol(value, TYPE_NUMBER);
         break;
 
     case "hex":
-        value = context.createConstant('' +
+        value = context.createSymbol('' +
                         parseInt(value.substring(2, value.length), 16),
                         TYPE_NUMBER);
         break;
 
     case "binary":
-        value = context.createConstant('' +
+        value = context.createSymbol('' +
                         parseInt(value.substring(2, value.length), 2),
                         TYPE_NUMBER);
         break;
         
     case "string":
-        value = context.createConstant(value, name);
-        break;
-
     case "boolean":
-        value = context.createConstant(value, name);
-        break;
-
     case "null":
-        value = context.createConstant(value, name);
-        break;
-
     case "undefined":
-        value = context.createConstant(value, name);
+    case "identifier":
+        value = context.createSymbol(value, name);
         break;
     }
 

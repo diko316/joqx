@@ -2,8 +2,7 @@
 
 import {
             string,
-            array,
-            contains
+            array
         } from "libcore";
 
 import { instantiate } from "./symbol.js";
@@ -11,7 +10,8 @@ import { instantiate } from "./symbol.js";
 export
     class Compile {
         constructor(iterator) {
-            var objectType = "object";
+            var identifierType = "identifier";
+            var context, helper;
 
             this.constantLookup = {};
             this.symbolConfig = {};
@@ -22,11 +22,17 @@ export
             this.lineFeed = "\n";
             this.defaultSymbolType = "mixed";
 
-            this.contextSymbol = this.createSymbol('context', objectType);
-            this.helperSymbol = this.createSymbol('helper', objectType);
-
             this.errorCount = 0;
             this.errorMessages = [];
+
+            this.contextSymbol = context = this.createSymbol('context',
+                                                            identifierType);
+
+            this.helperSymbol = helper = this.createSymbol('helper',
+                                                            identifierType);
+            // these are final symbols
+            context.finalize();
+            helper.finalize();
             
         }
 
@@ -35,20 +41,20 @@ export
 
             symbol.initialize(value, constantify);
 
-            return symbol.id;
+            return symbol;
         }
 
-        createConstant(value, type) {
-            var lookup = this.constantLookup;
+        // createConstant(value, type) {
+        //     var lookup = this.constantLookup;
             
 
-            if (contains(lookup, value)) {
-                return lookup[value].id;
-            }
+        //     if (contains(lookup, value)) {
+        //         return lookup[value].id;
+        //     }
             
-            return this.createSymbol(value, type, true);
+        //     return this.createSymbol(value, type, true);
             
-        }
+        // }
 
         getSymbol(id) {
             var symbols = this.symbols,

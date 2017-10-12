@@ -15,7 +15,7 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('buang[a.test]');
+compile('buang.test');
 
 
 

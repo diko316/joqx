@@ -1,7 +1,7 @@
 'use strict';
 
 
-import Base from "./base.js";
+import Base from "./collection.js";
 
 
 export default
