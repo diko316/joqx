@@ -8,6 +8,7 @@ import {
 
 function Symbol(compiler) {
     this.compiler = compiler;
+    this.type = this.type;
 }
 
 Symbol.prototype = {
@@ -49,7 +50,11 @@ Symbol.prototype = {
     },
 
     onDeclare: function () {
-        this.declareCode = this.value;
+        var value = this.getDeclarationValue();
+
+        if (value) {
+            this.declareCode = [this.id, ' = ', value];
+        }
     },
 
     onFinalize: function () {
@@ -65,64 +70,94 @@ Symbol.prototype = {
                                 constantify === true || constantify === false ?
                                     constantify : this.constant);
 
-            if (this.autoDeclare) {
-                this.declare();
-            }
-
             if (this.autoFinalize) {
                 this.finalize();
+            }
+            else if (this.autoDeclare) {
+                this.declare();
             }
         }
     },
 
     declare: function () {
         var compiler = this.compiler;
-        var value;
 
-        if (!this.declared) {
-            this.declared = true;
+        this.declared = true;
 
-            this.onDeclare(compiler, this.value);
-
-            value = this.declareCode;
-
-            if (array(value)) {
-                this.declareCode = value = value.join('');
-            }
-            
-            // declare!
-            if (string(value)) {
-                compiler.appendCode(this.id + ' = ' + value);
-            }
+        // finalize first
+        if (!this.finalized) {
+            this.finalize();
         }
+
+        this.onDeclare(compiler, this.value);
+
+        this.generateCodeLines([this.declareCode]);
+
+        return this;
 
     },
 
     finalize: function () {
-        var compiler = this.compiler,
-            isArray = array,
-            isString = string;
-        var value, c, l, item;
 
         if (!this.finalized) {
             this.finalized = true;
-            this.declare();
+            
             this.onFinalize(this.compiler);
 
-            value = this.finalizeCode;
-            if (isString(value)) {
-                value = [[value]];
-            }
+            this.generateCodeLines(this.finalizeCode);
 
-            if (isArray(value)) {
-                for (c = -1, l = value.length; l--;) {
-                    item = value[++c];
-                    if (isArray(item) || isString(item)) {
-                        compiler.appendCode(item);
-                    }
+        }
+
+        if (!this.declared) {
+            this.declare();
+        }
+
+        return this;
+    },
+
+    getDeclarationValue: function () {
+        return this.getCodeValue();
+    },
+
+    getCodeValue: function () {
+        return this.value;
+    },
+
+    generateCodeLines: function (value) {
+        var compiler = this.compiler,
+            isArray = array,
+            isString = string;
+        var c, l, item;
+
+        if (isString(value)) {
+            value = [[value]];
+        }
+
+        if (isArray(value)) {
+            for (c = -1, l = value.length; l--;) {
+                item = value[++c];
+                if (isArray(item) || isString(item)) {
+                    compiler.appendCode(item);
                 }
             }
         }
+
+        return this;
+    },
+
+    getHelperId: function () {
+        return this.compiler.helperSymbol.id;
+    },
+
+    getContextId: function () {
+        return this.compiler.contextSymbol.id;
+    },
+
+    redeclare: function () {
+        if (this.declared) {
+            this.declared = false;
+        }
+        return this.declare();
     }
 };
 

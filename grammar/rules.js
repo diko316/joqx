@@ -3,32 +3,41 @@
 module.exports = [
 
 // Lexical Grammars
+    "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
 
 // keywords
     "this",             [/this/],
-    "boolean",          [/true/, /false/],
+    "boolean",          [
+                            /true/,
+                            /false/
+                        ],
     "null",             [/null/],
     "undefined",        [/undefined/],
+
+    "new",              [/new/],
+    "delete",           [/delete/],
+    "typeof",           [/typeof/],
+
+    "instanceof",       [/instanceof/],
+    "and",              [/and/],
+    "or",               [/or/],
+    "in",               [/in/],
 
 // transformer
     "transform",        [/\-\>/],
 
 // arithmetic operators
+    "++",               [/\+\+/],
+    "--",               [/\-\-/],
+    "**",               [/\*\*/],
+
     "+",                [/\+/],
     "-",                [/\-/],
     "%",                [/\%/],
     "*",                [/\*/],
     "/",                [/\//],
 
-    "++",               [/\+\+/],
-    "--",               [/\-\-/],
-    "**",               [/\*\*/],
-
-// object
-    "new",              [/new/],
-    "delete",           [/delete/],
-    "typeof",           [/typeof/],
-
+// object access
     ".",                [/\./],
 
 // comparison
@@ -39,16 +48,13 @@ module.exports = [
     "lte",              [/lte/],
 
     ">=",               [/\>=/],
-    ">",                [/\>/],
-
     "<=",               [/<=/],
+
+    ">",                [/\>/],
     "<",                [/</],
 
 // logical
-    "instanceof",       [/instanceof/],
-    "and",              [/and/],
-    "or",               [/or/],
-    "in",               [/in/],
+    
 
     "&&",               [/\&\&/],
     "||",               [/\|\|/],
@@ -120,7 +126,7 @@ module.exports = [
 
     "intent",           [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
 
-    "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],
+    
 
 // Root Expression
     "Joqx",             [

@@ -9,6 +9,7 @@
 //             createArgumentSymbol,
 //         } from "./helper/argument.js";
 
+var TYPE_ARGUMENTS = "arguments";
 
 export
     function compileRule(compiler, lexeme) {
@@ -43,64 +44,79 @@ export
             case "1:Transform":
                 value = value[0];
                 break;
-
-            // updatable member
-            
-                // value = createReference(context,
-                //                         null,
-                //                         value[0],
-                //                         false);
-                //break;
                 
             // direct access is a property of context symbol
             case "1:Updatable":
-                value = value[0].access(compiler.contextSymbol, '.');
+                value = compiler.contextSymbol.access(value[0], true);
                 break;
 
             case "2:Updatable":
-                value = value[2].access(value[0], value[1]);
-                
-
-                // value = createReference(context,
-                //                         context.getSymbol(value[0]),
-                //                         value[2],
-                //                         false);
+                value = value[0].access(value[2], true);
                 break;
 
             case "3:Updatable":
-                value = value[2].access(value[0], value[1] + value[3]);
-                // value = createReference(context,
-                //                         context.getSymbol(value[0]),
-                //                         value[2],
-                //                         true);
+                value = value[0].access(value[2], false);
                 break;
             
             // arguments
             case "1:Arguments": // relay
-                // value = createArgumentSymbol(context,
-                //                             null,
-                //                             null);
+                value = compiler.createSymbol(null, TYPE_ARGUMENTS);
                 break;
 
             case "2:Arguments": // relay
-                //value = value[1];
+                value = value[1];
                 break;
 
             case "1:ArgumentList":
-                // value = createArgumentSymbol(context,
-                //                             null,
-                //                             value[0]);
+                value = compiler.createSymbol(null, TYPE_ARGUMENTS).
+                            append(value[0]);
                 break;
 
             case "2:ArgumentList":
-                // value = createArgumentSymbol(context,
-                //                             value[0],
-                //                             value[2]);
+                value = value[0].append(value[2]);
                 break;
 
-
+            // function call
             case "1:Call":
-                
+                value = compiler.createSymbol(null, "call").
+                            useReference(value[0]).
+                            useArguments(value[1]);
+                break;
+
+            // ++
+            case "2:PostFix":
+                value = value[0].increment(true);
+                break;
+
+            // -- 
+            case "3:PostFix":
+                value = value[0].decrement(true);
+                break;
+
+            // ++ infix
+            case "2:Unary":
+                value = value[1].increment(false);
+                break;
+
+            // -- infix
+            case "3:Unary":
+                value = value[1].decrement(false);
+                break;
+            
+            // positive sign
+            case "4:Unary":
+                console.log("positive!");
+                value = value[1].positive(false);
+                break;
+
+            // negative sign
+            case "5:Unary":
+                console.log("negative!");
+                value = value[1].negative(false);
+                break;
+
+            // typeof
+            case "6:Unary":
                 break;
 
 
@@ -112,6 +128,7 @@ export
             case "6:Assignment":
             case "7:Assignment":
             case "8:Assignment":
+                value = value[0].assign(value[2], value[1]);
                 //value = assign(context, value[1], value[0], value[2]);
 
                 break;

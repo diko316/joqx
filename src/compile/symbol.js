@@ -13,6 +13,7 @@ import BooleanSymbol from "./symbol/boolean.js";
 import ArraySymbol from "./symbol/boolean.js";
 
 import ObjectSymbol from "./symbol/object.js";
+import CallSymbol from "./symbol/call.js";
 
 
 import Identifier from "./symbol/identifier.js";
@@ -31,7 +32,7 @@ register("boolean", BooleanSymbol);
 
 register("array", ArraySymbol);
 register("object", ObjectSymbol);
-
+register("call", CallSymbol);
 
 register("identifier", Identifier);
 

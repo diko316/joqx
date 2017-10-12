@@ -30,7 +30,13 @@ export
 
             this.helperSymbol = helper = this.createSymbol('helper',
                                                             identifierType);
+
+            console.log("context ", context);
+            
             // these are final symbols
+            context.symbolAccess =
+                helper.symbolAccess = true;
+
             context.finalize();
             helper.finalize();
             

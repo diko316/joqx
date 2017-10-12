@@ -1,7 +1,7 @@
 'use strict';
 
 
-import Base from "./base.js";
+import Base from "./native.js";
 
 
 export default
@@ -9,8 +9,9 @@ export default
         
         constructor(compiler) {
             super(compiler);
-
-            this.autoDeclare = false;
+            this.allowAccess = 
+                this.autoDeclare = false;
+            
         }
         
     }
