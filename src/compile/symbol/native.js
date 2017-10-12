@@ -14,10 +14,32 @@ export default
         constructor(compiler) {
             super(compiler);
 
-            this.autoDeclare = 
+            this.reference =
+                this.autoDeclare = 
                 this.allowAccess = true;
 
             this.finalizeOnAccess = true;
+
+            this.allowBinaryOperation = [
+                '**',
+                '*',
+                '/',
+                '%',
+                '+',
+                '-',
+                '<',
+                '>',
+                '<=',
+                '>=',
+                'instanceof',
+                'in',
+                '==',
+                '===',
+                '!=',
+                '!==',
+                '&&',
+                '||'
+            ];
 
         }
 
@@ -34,12 +56,9 @@ export default
             this.finalize();
 
             // create identifier
-            identifier = this.compiler.createSymbol(this.id,
-                                                    "identifier");
-            identifier.symbolAccess = true;
+            identifier = this.createVariableOfMe();
             identifier.directAccess = directAccess;
             identifier.accessParent = from;
-
             
             return identifier;
             
@@ -80,6 +99,102 @@ export default
 
         assign() {
             throw new Error("Invalid Assignment");
+        }
+
+// arithmetic
+        binaryOperation(operand, operation) {
+            var allow = this.allowBinaryOperation;
+
+            if (!(operand instanceof Base)) {
+                throw new Error("Invalid [operand] parameter.");
+            }
+
+            if (allow.indexOf(operation) === -1) {
+                throw new Error("Operation not allowed " + operation +
+                                " for " + operand.type);
+            }
+
+            return operand.createVariableOfMe([this.id, ' ',
+                                                operation, ' ',
+                                                operand.id]).
+                        addDependency(this);
+
+        }
+
+        exponential(operand) {
+            return this.binaryOperation(operand, '**');
+        }
+
+        multiplication(operand) {
+            return this.binaryOperation(operand, '*');
+        }
+
+        division(operand) {
+            return this.binaryOperation(operand, '/');
+        }
+
+        modulo(operand) {
+            return this.binaryOperation(operand, '%');
+        }
+
+        addition(operand) {
+            return this.binaryOperation(operand, '+');
+        }
+
+        subtraction(operand) {
+            return this.binaryOperation(operand, '-');
+        }
+
+        lt(operand) {
+            return this.binaryOperation(operand, '<');
+        }
+
+        lte(operand) {
+            return this.binaryOperation(operand, '<=');
+        }
+
+        gt(operand) {
+            return this.binaryOperation(operand, '>');
+        }
+
+        gte(operand) {
+            return this.binaryOperation(operand, '>=');
+        }
+
+        instanceOf(operand) {
+            return this.binaryOperation(operand, 'instanceof');
+        }
+
+        inOp(operand) {
+            return this.binaryOperation(operand, 'in');
+        }
+
+        equal(operand) {
+            return this.binaryOperation(operand, '==');
+        }
+
+        sequal(operand) {
+            return this.binaryOperation(operand, '===');
+        }
+
+        notEqual(operand) {
+            return this.binaryOperation(operand, '!=');
+        }
+
+        notSequal(operand) {
+            return this.binaryOperation(operand, '!==');
+        }
+
+        and(operand) {
+            return this.binaryOperation(operand, '&&');
+        }
+
+        or(operand) {
+            return this.binaryOperation(operand, '||');
+        }
+
+        guard() {
+
         }
         
     }

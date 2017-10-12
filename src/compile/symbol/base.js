@@ -9,6 +9,8 @@ import {
 function Symbol(compiler) {
     this.compiler = compiler;
     this.type = this.type;
+
+    this.pendingCodes = [];
 }
 
 Symbol.prototype = {
@@ -97,6 +99,13 @@ Symbol.prototype = {
 
     },
 
+    redeclare: function () {
+        if (this.declared) {
+            this.declared = false;
+        }
+        return this.declare();
+    },
+
     finalize: function () {
 
         if (!this.finalized) {
@@ -119,20 +128,11 @@ Symbol.prototype = {
         return this.createVariableOfMe('typeof ' + this.id);
     },
 
-    createVariableOfMe: function (value) {
-        var identifier;
-
-        if (!string(value)) {
-            value = this.id;
-        }
-
-        identifier = this.compiler.createSymbol(value, "identifier");
-        identifier.symbolAccess = true;
-        identifier.reference = this;
-
-        return identifier;
-
+    notSymbol: function () {
+        return this.createVariableOfMe('!' + this.id);
     },
+
+    
 
     getDeclarationValue: function () {
         return this.getCodeValue();
@@ -142,23 +142,34 @@ Symbol.prototype = {
         return this.value;
     },
 
-    generateCodeLines: function (value) {
+    generateCodeLines: function (value, force) {
         var compiler = this.compiler,
             isArray = array,
-            isString = string;
-        var c, l, item;
+            isString = string,
+            pending = this.pendingCodes,
+            commit = this.finalized || force === true;
+        var c, l, item, pl;
 
         if (isString(value)) {
             value = [[value]];
         }
 
         if (isArray(value)) {
+            pl = pending.length;
             for (c = -1, l = value.length; l--;) {
                 item = value[++c];
                 if (isArray(item) || isString(item)) {
-                    compiler.appendCode(item);
+                    pending[pl++] = item;
                 }
             }
+        }
+
+        // commit
+        if (commit) {
+            for (c = -1, l = pending.length; l--;) {
+                compiler.appendCode(value[++c]);
+            }
+            pending.splice(0, pending.length);
         }
 
         return this;
@@ -172,11 +183,23 @@ Symbol.prototype = {
         return this.compiler.contextSymbol.id;
     },
 
-    redeclare: function () {
-        if (this.declared) {
-            this.declared = false;
+    createVariableOfMe: function (value) {
+        var identifier;
+
+        if (array(value)) {
+            value = value.join('');
         }
-        return this.declare();
+
+        if (!string(value)) {
+            value = this.id;
+        }
+
+        identifier = this.compiler.createSymbol(value, "identifier");
+        identifier.symbolAccess = true;
+        identifier.addDependency(this);
+
+        return identifier;
+
     }
 
 

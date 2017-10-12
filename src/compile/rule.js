@@ -29,7 +29,6 @@ export
             switch (lexeme.rule) {
             // relay rules
             case "1:PostFix":
-            case "1:Unary":
             case "1:Exponential":
             case "1:Multiplicative":
             case "1:Additive":
@@ -43,6 +42,11 @@ export
             case "1:Namespace":
             case "1:Transform":
                 value = value[0];
+                break;
+
+            // relay group
+            case "1:Group":
+                value = value[1];
                 break;
                 
             // direct access is a property of context symbol
@@ -92,6 +96,15 @@ export
             case "3:PostFix":
                 value = value[0].decrement(true);
                 break;
+            
+            // relay it into an identifier
+            case "1:Unary":
+                value = value[0];
+                // if (value.type !== "identifier") {
+                //     value = value.createVariableOfMe().
+                //                 addDependency(value);
+                // }
+                break;
 
             // ++ infix
             case "2:Unary":
@@ -118,6 +131,91 @@ export
                 value = value[1].typeofSymbol();
                 break;
 
+            // !not
+            case "7:Unary":
+                value = value[1].notSymbol();
+                break;
+
+            // ***
+            case "2:Exponential":
+                value = value[0].exponential(value[2]);
+                break;
+            
+            // *
+            case "2:Multiplicative":
+                value = value[0].multiplication(value[2]);
+                console.log("applied multiplication! ", value);
+                break;
+
+            // /
+            case "3:Multiplicative":
+                value = value[0].division(value[2]);
+                break;
+
+            // %
+            case "3:Multiplicative":
+                value = value[0].modulo(value[2]);
+                break;
+
+            // -
+            case "2:Additive":
+                value = value[0].subtraction(value[2]);
+                break;
+
+            // +
+            case "3:Additive":
+                value = value[0].addition(value[2]);
+                break;
+            
+            // <
+            case "2:Relational":
+            case "3:Relational":
+                value = value[0].lt(value[2]);
+                break;
+            
+            // >
+            case "4:Relational":
+            case "5:Relational":
+                value = value[0].gt(value[2]);
+                break;
+
+            // <=
+            case "6:Relational":
+            case "7:Relational":
+                value = value[0].lte(value[2]);
+                break;
+
+            // >=
+            case "8:Relational":
+            case "9:Relational":
+                value = value[0].gte(value[2]);
+                break;
+
+            case "2:Equality":
+                value = value[0].equal(value[2]);
+                break;
+
+            case "3:Equality":
+                value = value[0].notEqual(value[2]);
+                break;
+
+            case "4:Equality":
+                value = value[0].sequal(value[2]);
+                break;
+
+            case "5:Equality":
+                value = value[0].notSequal(value[2]);
+                break;
+
+            case "2:LogicalAnd":
+            case "3:LogicalAnd":
+                value = value[0].and(value[2]);
+                break;
+
+            case "4:LogicalOr":
+            case "5:LogicalOr":
+                value = value[0].or(value[2]);
+                break;
 
             // assignment
             case "2:Assignment":
@@ -158,6 +256,7 @@ export
 
             // last
             case "1:Joqx":
+                value[0].finalize();
                 // value = value[0];
                 // context.appendCode([
                 //     'return ', value

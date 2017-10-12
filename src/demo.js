@@ -15,7 +15,7 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('typeof diko');
+compile('1 + 3 * 2');
 
 
 

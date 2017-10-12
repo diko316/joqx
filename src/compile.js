@@ -38,7 +38,7 @@ function compile(subject) {
             compileTerminal :
             compileRule)(context, lexeme);
         
-        console.log(lexeme.name, lexeme.rule, lexeme.value, " <- ", value);
+        console.log(lexeme.name, lexeme.rule, lexeme.value.value);//, " <- ", value);
         
     }
 

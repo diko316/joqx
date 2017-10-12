@@ -2,11 +2,13 @@
 
 import { string } from "libcore";
 
-import Base from "./native.js";
+import Base from "./base.js";
+
+import NativeSymbol from "./native.js";
 
 
 export default
-    class Identifier extends Base {
+    class Identifier extends NativeSymbol {
 
         constructor(compiler) {
             super(compiler);
@@ -16,9 +18,9 @@ export default
                 this.symbolAccess =
                 this.finalizeOnAccess = false;
 
-            this.reference =
-                this.accessParent = null;
+            this.accessParent = null;
 
+            this.references = [];
             
             this.allowAccess = 
                 this.allowAccessUpdate = true;
@@ -26,10 +28,12 @@ export default
         }
 
         onDeclare() {
-            var reference = this.reference;
+            var list = this.references,
+                len = list.length,
+                c = -1;
 
-            if (reference) {
-                reference.finalize();
+            for (; len--;) {
+                list[++c].finalize();
             }
 
             super.onDeclare();
@@ -61,6 +65,21 @@ export default
             ]).join('');
         }
 
+        generateJSONPathArray() {
+            var current = this,
+                list = [],
+                len = 0;
+
+            for (; current.accessParent; current = current.accessParent) {
+                list[len++] = current.getCodeValue();
+            }
+
+            list.reverse();
+
+            return '[' + list.join(',') + ']';
+
+        }
+
         createUpdateAccessSymbol(from, directAccess) {
             // if not direct access, resolve value and create another identifier
             if (!directAccess) {
@@ -75,6 +94,18 @@ export default
             
         }
 
+        addDependency(symbol) {
+            var list = this.references;
+
+            if (!(symbol instanceof Base)) {
+                throw new Error("Invalid [symbol] dependency.");
+            }
+
+            list[list.length] = symbol;
+
+            return this;
+        }
+
         assign(source, operator) {
             var jsonPath = this.generateJSONPathArray(),
                 helper = this.getHelperId(),
@@ -86,7 +117,7 @@ export default
                 sourceReference = sourceId;
 
             // source should be finalized if not yet finalized
-            source.finalize();
+            this.addDependency(source);
             
             // for arithmetic assignment
             if (string(operator)) {
@@ -170,20 +201,7 @@ export default
         }
 
 
-        generateJSONPathArray() {
-            var current = this,
-                list = [],
-                len = 0;
-
-            for (; current.accessParent; current = current.accessParent) {
-                list[len++] = current.getCodeValue();
-            }
-
-            list.reverse();
-
-            return '[' + list.join(',') + ']';
-
-        }
+        
 
 
         
