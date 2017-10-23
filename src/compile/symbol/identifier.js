@@ -25,6 +25,8 @@ export default
             this.allowAccess = 
                 this.allowAccessUpdate = true;
 
+            this.accessOrigin = null;
+
         }
 
         onDeclare() {
@@ -38,6 +40,11 @@ export default
 
             super.onDeclare();
 
+        }
+
+        setAccessOrigin(item) {
+            this.accessOrigin = item;
+            return this;
         }
 
         // do not declare
@@ -60,9 +67,14 @@ export default
         getAccessCodeValue() {
             return ([
                 this.getHelperId(), ".get(",
-                            this.getContextId(), ',',
+                            this.getAccessOrigin(), ',',
                             this.generateJSONPathArray(), ')'
             ]).join('');
+        }
+
+        getAccessOrigin() {
+            var item = this.accessOrigin;
+            return string(item) ? item : this.getContextId();
         }
 
         generateJSONPathArray() {

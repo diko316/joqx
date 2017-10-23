@@ -47,7 +47,6 @@ export
             
             case "1:Javascript":
             case "2:Javascript":
-            case "1:Namespace":
             case "1:Transform":
                 value = value[0];
                 break;
@@ -243,20 +242,50 @@ export
                 value = value[1].unset();
                 break;
 
+            // transformer namespace
+            case "1:Namespace":
+                value = value[0];
+                value.value = '|' + value.value;
+                value = compiler.contextSymbol.access(value, true).
+                            setAccessOrigin(compiler.helperSymbol.id);
+                
+                //compiler.helperSymbol.access(value, true).
+                                
+                break;
+
+            case "2:Namespace":
+                value = value[0].access(value[2], true).
+                            setAccessOrigin(compiler.helperSymbol.id);
+                break;
+
             // transformer
-            case "2:Transformer": // relay
-                //lexeme.callArguments = value[1];
-            
-            /* falls through */
             case "1:Transformer": // relay
-                // value = [context.
-                //             createSymbol([helperVar,
-                //                         '.getTransformer("', value[0], '")']),
-                //             lexeme.callArguments || []];
+                value = compiler.createSymbol(null, "transformer").
+                                useReference(value[0]);
+                break;
+
+            case "2:Transformer": // relay
+                value = compiler.createSymbol(null, "transformer").
+                                useReference(value[0]).
+                                useArguments(value[1]);
                 break;
 
             // transform
             case "2:Transform":
+                value = value[2].setBaseArgument(value[0]);
+
+                
+
+                // value[2].setBaseArgument(value[0]);
+                // value = compiler.createSymbol(null, "identifier").
+
+                //             assign(value[2].
+                //                     setBaseArgument(value[0]),
+                //                     "=");
+                
+                                
+            
+                console.log("transform! ", value);
                 // callback = value[2];
                 // callArguments = [helperVar, value[0]].
                 //                     concat(callback[1]).

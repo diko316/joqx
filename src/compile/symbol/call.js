@@ -43,27 +43,30 @@ export default
             var reference = this.reference,
                 args = this.arguments;
 
-            if (reference && args) {
+            if (reference) {
                 reference.finalize();
 
-                args = args.getCodeValue();
+                args = this.getArgumentsCode();
 
                 return (this.constructorCall ?
                             [
-                                'new ',
-                                reference.id,
-                                '(', args ? args : '', ')'
+                                'new ', reference.id, '(', args, ')'
                             ] :
                             [
-                                reference.id,
-                                '.call(',
-                                this.getCallContext(),
-                                args ? ',' + args : '',
-                                ')'
+                                reference.id, '.call(', args, ')'
                             ]).join('');
 
             }
             return null;
+
+        }
+
+        getArgumentsCode() {
+            var args = this.getCodeValue();
+
+            return this.constructorCall ?
+                        args :
+                        this.getCallContext() + (args ? ',' + args : '');
 
         }
 

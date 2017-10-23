@@ -15,7 +15,7 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('delete diko');
+compile('1 -> test.name');
 
 
 

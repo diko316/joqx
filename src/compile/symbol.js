@@ -19,6 +19,8 @@ import CallSymbol from "./symbol/call.js";
 import Identifier from "./symbol/identifier.js";
 import Arguments from "./symbol/arguments.js";
 
+import Transformer from "./symbol/transformer.js";
+
 
 register("default", Base);
 
@@ -36,6 +38,7 @@ register("call", CallSymbol);
 register("identifier", Identifier);
 
 register("arguments", Arguments);
+register("transformer", Transformer);
 
 
 
