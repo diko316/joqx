@@ -151,7 +151,6 @@ export
             // *
             case "2:Multiplicative":
                 value = value[0].multiplication(value[2]);
-                console.log("applied multiplication! ", value);
                 break;
 
             // /
