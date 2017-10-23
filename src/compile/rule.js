@@ -244,18 +244,22 @@ export
 
             // transformer namespace
             case "1:Namespace":
-                value = value[0];
-                value.value = '|' + value.value;
-                value = compiler.contextSymbol.access(value, true).
-                            setAccessOrigin(compiler.helperSymbol.id);
-                
-                //compiler.helperSymbol.access(value, true).
+                // value = compiler.contextSymbol.access(value[0], true).
+                //             setAccessOrigin(compiler.helperSymbol.id);
+
+                // value = compiler.createSymbol('')
+                value = value[0].setSymbolAccess();
+                // value.value = '|' + value.value;
+                // value = compiler.contextSymbol.access(value, true).
+                //             setAccessOrigin(compiler.helperSymbol.id);
+                // console.log("NS VALUE: ", value.value);
                                 
                 break;
 
             case "2:Namespace":
-                value = value[0].access(value[2], true).
-                            setAccessOrigin(compiler.helperSymbol.id);
+                value = value[0].setValue(value[0].value +
+                                            '.' +
+                                            value[2].value);
                 break;
 
             // transformer
@@ -273,36 +277,15 @@ export
             // transform
             case "2:Transform":
                 value = value[2].setBaseArgument(value[0]);
-
-                
-
-                // value[2].setBaseArgument(value[0]);
-                // value = compiler.createSymbol(null, "identifier").
-
-                //             assign(value[2].
-                //                     setBaseArgument(value[0]),
-                //                     "=");
-                
-                                
-            
-                console.log("transform! ", value);
-                // callback = value[2];
-                // callArguments = [helperVar, value[0]].
-                //                     concat(callback[1]).
-                //                     join(',');
-                // callback = callback[0];
-
-                // value = context.createSymbol([callback, ' ? ',
-                //                 callback, '(', callArguments, ') : undefined']);
                 break;
 
             // last
             case "1:Joqx":
                 value[0].finalize();
-                // value = value[0];
-                // context.appendCode([
-                //     'return ', value
-                // ]);
+                value = value[0];
+                compiler.appendCode([
+                    'return ', value.id
+                ]);
             }
         }
 

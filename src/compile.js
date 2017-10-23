@@ -26,7 +26,7 @@ function compile(subject) {
 
     iterator.set(subject);
     lexeme = iterator.next();
-    console.log('first! ', lexeme);
+    //console.log('first! ', lexeme);
 
     for (; lexeme; lexeme = iterator.next()) {
 
@@ -38,7 +38,7 @@ function compile(subject) {
             compileTerminal :
             compileRule)(context, lexeme);
         
-        console.log(lexeme.name, lexeme.rule, lexeme.value);//, " <- ", value);
+        //console.log(lexeme.name, lexeme.rule, lexeme.value);//, " <- ", value);
         
     }
 

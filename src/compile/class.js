@@ -30,8 +30,6 @@ export
 
             this.helperSymbol = helper = this.createSymbol('helper',
                                                             identifierType);
-
-            console.log("context ", context);
             
             // these are final symbols
             context.symbolAccess =

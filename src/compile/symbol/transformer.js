@@ -11,6 +11,12 @@ export default
             this.baseArgument = null;
         }
 
+        onUseReference(symbol) {
+            symbol.setValue(
+                this.compiler.helperSymbol.id +
+                '.getTransformer("' + symbol.value + '")');
+        }
+
         setBaseArgument(item) {
             this.addDependency(item).baseArgument = item;
             return this;
@@ -21,7 +27,9 @@ export default
                 base = this.baseArgument;
 
             if (base) {
-                args = args ? base + ',' + args : '';
+                args = args ?
+                             base.id + ',' + args :
+                             base.id;
             }
 
             return this.constructorCall ?

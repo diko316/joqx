@@ -15,7 +15,9 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('1 -> test.name');
+//compile('1 -> test.name -> again');
+
+compile('1 + 2 * 3');
 
 
 

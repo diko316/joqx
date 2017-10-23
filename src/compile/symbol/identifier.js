@@ -47,11 +47,26 @@ export default
             return this;
         }
 
+        setSymbolAccess(isSymbolAccess) {
+            this.symbolAccess = isSymbolAccess !== false;
+            return this;
+        }
+
+        setFinalizeOnAccess(isFinalizedOnAccess) {
+            this.finalizeOnAccess = isFinalizedOnAccess !== false;
+            return this;
+        }
+
         // do not declare
         getDeclarationValue() {
             return this.symbolAccess ?
                         this.getCodeValue() :
                         this.getAccessCodeValue();
+        }
+
+        setValue(value) {
+            this.value = value;
+            return this;
         }
 
         getCodeValue() {
@@ -179,7 +194,6 @@ export default
                 this.getHelperId(), '.unset(', this.getContextId(), ',',
                                     this.generateJSONPathArray(), ')'
             ]]);
-            console.log("returning this!");
             return this;
         }
 

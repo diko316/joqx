@@ -24,6 +24,7 @@ export default
                 this.arguments = null;
 
             this.constructorCall = false;
+            this.disableContext = false;
         }
 
         onUseReference() {
