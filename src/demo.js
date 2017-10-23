@@ -15,7 +15,7 @@ import { compile } from "./index.js";
 //                         }));
 
 
-compile('1 + 3 * 2');
+compile('delete diko');
 
 
 

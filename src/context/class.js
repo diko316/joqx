@@ -1,14 +1,13 @@
 'use strict';
 
 import {
-            object,
-            array,
             string,
             number,
             method,
             contains,
             jsonFill,
-            jsonFind
+            jsonFind,
+            jsonUnset
         } from "libcore";
 
 import {
@@ -31,6 +30,12 @@ Context.prototype = {
         return string(property) || number(property);
     },
 
+    get: function (subject, paths) {
+        
+        return jsonFind(this.createJsonPath(paths), subject);
+        
+    },
+
     set: function (subject, paths, value) {
 
         jsonFill(this.createJsonPath(paths), subject, value);
@@ -39,9 +44,9 @@ Context.prototype = {
         
     },
 
-    get: function (subject, paths) {
+    unset: function (subject, paths) {
         
-        return jsonFind(this.createJsonPath(paths), subject);
+        return jsonUnset(this.createJsonPath(paths), subject);
         
     },
 

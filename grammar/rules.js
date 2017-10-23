@@ -3,9 +3,9 @@
 module.exports = [
 
 // Lexical Grammars
-    
+        
 
-// keywords
+    // keywords
     "this",             [/this/],
     "boolean",          [
                             /true/,
@@ -138,7 +138,7 @@ module.exports = [
 // Root Expression
     "Joqx",             [
                             "Transform",
-                            ["intent", "Transform"],
+                            ["intent", "Transform"]
                         ],
     
 // Number
@@ -172,7 +172,7 @@ module.exports = [
 
     "Properties",       [
                             "Property",
-                            ["Properies", ",", "Property"]
+                            ["Properties", ",", "Property"]
                         ],
 
     "Property",         [
@@ -199,61 +199,52 @@ module.exports = [
     "Void",             [
                             ["void(", "Javascript", ")"]
                         ],
-// Literal
-   
+
+// Function Call
     "Literal",          [
                             "this",
                             "boolean",
                             "null",
                             "undefined",
                             "string",
-
-                            "Number",
+                            "Number"
+                        ],
+    
+    "Primary",          [
+                            "Literal",
+                        
                             "Array",
                             "Object",
                             "Void",
-                            "Group"
+                            "Group",
+                            ["Updatable", "Arguments"],
+                            ["new", "Updatable"]
                         ],
 
-// Object Member
     "Updatable",        [
+                            "Primary",
                             "identifier",
-                            ["Primary", ".", "identifier"],
-                            ["Primary", "[", "Javascript", "]"]
+                            ["Updatable", ".", "identifier"],
+                            ["Updatable", "[", "Javascript", "]"]
                         ],
 
-// Function Call
-    "Call",             [
-                            ["Primary", "Arguments"]
-                        ],
-
-    "Instantiate",      [
-                            ["new", "Primary"],
-                            ["new", "Primary", "Arguments"]
-                        ],
-
-    "Primary",          [
-                            "Updatable",
-                            "Literal",
-                            "Instantiate",
-                            "Call"
-                        ],
+    
 
     "PostFix",          [
-                            "Primary",
+                            "Updatable",
                             ["Updatable", "++"],
                             ["Updatable", "--"]
-                            
                         ],
 
     "Unary",            [
+                            
                             "PostFix",
                             ["++", "Updatable"],
                             ["--", "Updatable"],
                             ["+",  "Number"],
                             ["-", "Number"],
-                            ["typeof", "Primary"],
-                            ["!", "Primary"]
+                            ["typeof", "Unary"],
+                            ["!", "Unary"]
                         ],
 
     "Exponential",      [
@@ -352,6 +343,4 @@ module.exports = [
                             "Javascript",
                             ["Transform", "transform", "Transformer"]
                         ]
-
-
 ];

@@ -154,6 +154,23 @@ export default
             return this;
         }
 
+        instantiate() {
+            var symbol = this.createVariableOfMe([
+                                    'new ' + this.id
+                                ],
+                                "identifier");
+            return symbol;
+        }
+
+        unset() {
+            this.generateCodeLines([[
+                this.getHelperId(), '.unset(', this.getContextId(), ',',
+                                    this.generateJSONPathArray(), ')'
+            ]]);
+            console.log("returning this!");
+            return this;
+        }
+
         increment(postfix) {
 
             if (postfix) {
@@ -170,7 +187,8 @@ export default
             }
             // infix is normal call to assign with += operator
             else {
-                this.assign(this.compiler.createSymbol('1', "number"), '+=');
+                this.assign(this.compiler.createSymbol('1', "number"),
+                            '+=');
             }
 
             return this;

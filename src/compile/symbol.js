@@ -20,7 +20,6 @@ import Identifier from "./symbol/identifier.js";
 import Arguments from "./symbol/arguments.js";
 
 
-
 register("default", Base);
 
 register("null", NullSymbol);

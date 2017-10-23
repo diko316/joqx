@@ -101,6 +101,14 @@ export default
             throw new Error("Invalid Assignment");
         }
 
+        instantiate() {
+            throw new Error("Invalid Instantiation");
+        }
+
+        unset() {
+            throw new Error("Invalid Delete statement");
+        }
+
 // arithmetic
         binaryOperation(operand, operation) {
             var allow = this.allowBinaryOperation;

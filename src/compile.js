@@ -16,7 +16,7 @@ function compile(subject) {
         compileTerminal = handleTerminal,
         compileRule = handleRule;
 
-    var lexeme, compiled, generated;
+     var lexeme, compiled, generated;
 
     function exec(contextObject) {
         return compiled(new Context(), contextObject);
@@ -38,13 +38,15 @@ function compile(subject) {
             compileTerminal :
             compileRule)(context, lexeme);
         
-        console.log(lexeme.name, lexeme.rule, lexeme.value.value);//, " <- ", value);
+        console.log(lexeme.name, lexeme.rule, lexeme.value);//, " <- ", value);
         
     }
 
     generated = context.generate();
 
     console.log(generated);
+
+    console.log(iterator);
 
     //compiled = new F('helper, context', generated);
     //console.log("compiled ", compiled.toString());

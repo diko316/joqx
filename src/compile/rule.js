@@ -21,14 +21,20 @@ export
         case "Number":
         case "Literal":
         case "Javascript":
-        case "Primary":
             value = value[0];
             break;
 
         default:
             switch (lexeme.rule) {
             // relay rules
+            case "1:Primary":
+            case "2:Primary":
+            case "3:Primary":
+            case "4:Primary":
+            case "5:Primary":
+            case "1:Updatable":
             case "1:PostFix":
+            case "1:Unary":
             case "1:Exponential":
             case "1:Multiplicative":
             case "1:Additive":
@@ -38,7 +44,9 @@ export
             case "1:LogicalOr":
             case "1:Conditional":
             case "1:Assignment":
-
+            
+            case "1:Javascript":
+            case "2:Javascript":
             case "1:Namespace":
             case "1:Transform":
                 value = value[0];
@@ -49,18 +57,7 @@ export
                 value = value[1];
                 break;
                 
-            // direct access is a property of context symbol
-            case "1:Updatable":
-                value = compiler.contextSymbol.access(value[0], true);
-                break;
-
-            case "2:Updatable":
-                value = value[0].access(value[2], true);
-                break;
-
-            case "3:Updatable":
-                value = value[0].access(value[2], false);
-                break;
+            
             
             // arguments
             case "1:Arguments": // relay
@@ -81,11 +78,30 @@ export
                 break;
 
             // function call
-            case "1:Call":
+            case "6:Primary":
                 value = compiler.createSymbol(null, "call").
                             useReference(value[0]).
                             useArguments(value[1]);
                 break;
+            // new object
+            case "7:Primary":
+                value = value[1].instantiate();
+                break;
+
+            // direct access is a property of context symbol
+            case "2:Updatable":
+                value = compiler.contextSymbol.access(value[0], true);
+                break;
+
+            case "3:Updatable":
+                value = value[0].access(value[2], true);
+                break;
+
+            case "4:Updatable":
+                value = value[0].access(value[2], false);
+                break;
+
+            
 
             // ++
             case "2:PostFix":
@@ -96,15 +112,7 @@ export
             case "3:PostFix":
                 value = value[0].decrement(true);
                 break;
-            
-            // relay it into an identifier
-            case "1:Unary":
-                value = value[0];
-                // if (value.type !== "identifier") {
-                //     value = value.createVariableOfMe().
-                //                 addDependency(value);
-                // }
-                break;
+
 
             // ++ infix
             case "2:Unary":
@@ -229,10 +237,15 @@ export
                 //value = assign(context, value[1], value[0], value[2]);
 
                 break;
+            
+            // delete statement
+            case "1:Delete":
+                value = value[1].unset();
+                break;
 
             // transformer
             case "2:Transformer": // relay
-                lexeme.callArguments = value[1];
+                //lexeme.callArguments = value[1];
             
             /* falls through */
             case "1:Transformer": // relay

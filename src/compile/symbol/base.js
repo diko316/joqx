@@ -167,7 +167,7 @@ Symbol.prototype = {
         // commit
         if (commit) {
             for (c = -1, l = pending.length; l--;) {
-                compiler.appendCode(value[++c]);
+                compiler.appendCode(pending[++c]);
             }
             pending.splice(0, pending.length);
         }

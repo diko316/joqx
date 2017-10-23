@@ -2,6 +2,8 @@
 
 import NativeObject from "./native.js";
 
+import Identifier from "./identifier.js";
+
 import ArgumentSymbol from "./arguments.js";
 
 var INVALID_ARGUMENTS = "Invalid Arguments [symbol] parameter.",
@@ -10,7 +12,7 @@ var INVALID_ARGUMENTS = "Invalid Arguments [symbol] parameter.",
 
 
 export default
-    class CallSymbol extends NativeObject {
+    class CallSymbol extends Identifier {
 
         constructor(compiler) {
             super(compiler);
@@ -21,6 +23,7 @@ export default
             this.reference = 
                 this.arguments = null;
 
+            this.constructorCall = false;
         }
 
         onUseReference() {
@@ -29,6 +32,11 @@ export default
 
         onUseArguments() {
 
+        }
+
+        instantiate() {
+            this.constructorCall = true;
+            return this;
         }
 
         getDeclarationValue() {
@@ -40,10 +48,19 @@ export default
 
                 args = args.getCodeValue();
 
-                return ([
-                    reference.id, '.call(', this.getCallContext(),
-                                            args ? ',' + args : '', ')'
-                ]).join('');
+                return (this.constructorCall ?
+                            [
+                                'new ',
+                                reference.id,
+                                '(', args ? args : '', ')'
+                            ] :
+                            [
+                                reference.id,
+                                '.call(',
+                                this.getCallContext(),
+                                args ? ',' + args : '',
+                                ')'
+                            ]).join('');
 
             }
             return null;
