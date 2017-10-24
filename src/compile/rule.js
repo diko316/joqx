@@ -3,12 +3,9 @@
 
 
 import {
-            jsonRecodeArrayPath
+            jsonRecodeArrayPath,
+            escapeString
         } from "../helper/string.js";
-
-// import {
-//             createArgumentSymbol,
-//         } from "./helper/argument.js";
 
 var TYPE_ARGUMENTS = "arguments",
     TYPE_IDENTIFIER = "identifier";
@@ -29,7 +26,6 @@ export
         default:
             switch (lexeme.rule) {
             // relay rules
-            
             case "2:Literal":
             case "3:Literal":
             case "4:Literal":
@@ -382,12 +378,23 @@ export
                 break;
 
             case "2:Joqx":
-                value = value[1];
+                item1 = value[0];
+                item2 = value[1];
+                value = compiler.createSymbol(compiler.helperSymbol.id +
+                                '.execIntent("' +
+                                    escapeString(item1.
+                                        substring(1, item1.length)) + '",' +
+                                        item2.id + ')',
+                                TYPE_IDENTIFIER).
+                            setSymbolAccess().
+                            addDependency(item2);
+                // console.log("intent ", value[0]);
+                // value = value[1];
                 break;
 
             case "1:Joqx'":
                 value = value[0];
-                value.finalize();
+                value.declare();
                 compiler.nullFill(value.id);
                 compiler.appendCode([
                     'return ', value.id

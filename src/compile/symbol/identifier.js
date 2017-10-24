@@ -16,7 +16,8 @@ export default
             this.autoDeclare =
                 this.directAccess = 
                 this.symbolAccess =
-                this.finalizeOnAccess = false;
+                this.finalizeOnAccess = 
+                this.disableValueRecode = false;
 
             this.accessParent = null;
 
@@ -33,9 +34,11 @@ export default
             var list = this.references,
                 len = list.length,
                 c = -1;
+            var item;
 
             for (; len--;) {
-                list[++c].finalize();
+                item = list[++c];
+                item.declare();
             }
 
             super.onDeclare();
@@ -59,6 +62,9 @@ export default
 
         // do not declare
         getDeclarationValue() {
+            if (this.disableValueRecode) {
+                return '';
+            }
             return this.symbolAccess ?
                         this.getCodeValue() :
                         this.getAccessCodeValue();
@@ -143,8 +149,11 @@ export default
                 id = this.id,
                 sourceReference = sourceId;
 
+            this.disableValueRecode = true;
+
             // source should be finalized if not yet finalized
             this.addDependency(source);
+            //console.log("added dependency ", source.id, ' to ', this.id, " source declared? ", source.declared, " me declared? ", this.declared);
             
             // for arithmetic assignment
             if (string(operator)) {
@@ -162,7 +171,7 @@ export default
                     sourceReference = id + ' ' + operator + ' ' + sourceId;
 
                     codes[line++] = [
-                        id, ' = ', this.getAccessCodeValue()
+                        id, ' = ', this.getAccessCodeValue(),
                     ];
 
                 }
@@ -175,8 +184,9 @@ export default
                                             jsonPath, ',',
                                             sourceReference, ')'
             ];
-
+            
             this.generateCodeLines(codes);
+            //this.value = null;
 
             return this;
         }
@@ -200,22 +210,31 @@ export default
         increment(postfix) {
 
             if (postfix) {
-                this.declare();
+                this.disableValueRecode = true;
 
                 this.generateCodeLines([[
-                    this.getHelperId(), '.set(', this.getContextId(), ',',
-                                        this.generateJSONPathArray(), ',',
-                                        this.id, ' + 1)'
-                ]]);
+                        this.id, ' = ',
+                            this.getHelperId(), '.get(',
+                                                this.getContextId(), ',',
+                                                this.generateJSONPathArray(),')'
+                    ],
+                    [
+                        this.getHelperId(), '.set(', this.getContextId(), ',',
+                                            this.generateJSONPathArray(), ',',
+                                            this.id, ' + 1)'
+                    ]]);
 
-                // in order to redefine again
                 this.declared = false;
+
+
             }
             // infix is normal call to assign with += operator
             else {
                 this.assign(this.compiler.createSymbol('1', "number"),
                             '+=');
+
             }
+            
 
             return this;
 
@@ -224,19 +243,24 @@ export default
         decrement(postfix) {
             
             if (postfix) {
-                this.declare();
+                this.disableValueRecode = true;
 
                 this.generateCodeLines([[
-                    this.getHelperId(), '.set(', this.getContextId(), ',',
-                                        this.generateJSONPathArray(), ',',
-                                        this.id, ' - 1)'
-                ]]);
+                        this.id, ' = ',
+                            this.getHelperId(), '.get(',
+                                                this.getContextId(), ',',
+                                                this.generateJSONPathArray(),')'
+                    ],
+                    [
+                        this.getHelperId(), '.set(', this.getContextId(), ',',
+                                            this.generateJSONPathArray(), ',',
+                                            this.id, ' - 1)'
+                    ]]);
 
-                // in order to redefine again
-                this.declared = false;
             }
             // infix is normal call to assign with += operator
             else {
+                
                 this.assign(this.compiler.createSymbol('1', "number"), '-=');
             }
 

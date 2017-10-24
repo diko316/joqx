@@ -35,8 +35,8 @@ export
             context.symbolAccess =
                 helper.symbolAccess = true;
 
-            context.finalize();
-            helper.finalize();
+            context.declare();
+            helper.declare();
             
         }
 

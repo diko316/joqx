@@ -27,7 +27,7 @@ export default
                 args = this.arguments;
 
             if (reference) {
-                reference.finalize();
+                reference.declare();
 
                 args = this.getArgumentsCode();
 
@@ -51,7 +51,7 @@ export default
                              base.id;
             }
 
-            return args;
+            return this.compiler.helperSymbol.id + (args ? ',' + args : '');
 
         }
     }

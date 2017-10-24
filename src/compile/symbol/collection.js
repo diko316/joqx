@@ -50,7 +50,7 @@ export default
 
             for (; l--;) {
                 symbol = data[++c];
-                symbol.finalize();
+                symbol.declare();
                 generated[c] = this.generateItemCode(symbol, c);
                 
             }

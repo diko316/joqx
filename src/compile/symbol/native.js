@@ -45,7 +45,7 @@ export default
 
         onAccess() {
             if (this.finalizeOnAccess) {
-                this.finalize();
+                this.declare();
             }
         }
 
@@ -53,7 +53,7 @@ export default
             var identifier;
 
             // pray that runtime can generate string
-            this.finalize();
+            this.declare();
 
             // create identifier
             identifier = this.createVariableOfMe();

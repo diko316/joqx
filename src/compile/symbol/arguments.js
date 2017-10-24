@@ -10,9 +10,7 @@ export default
         constructor(compiler) {
             super(compiler);
 
-            this.autoDeclare =
-                this.autoFinalize = 
-                this.finalizeOnAccess = false;
+            this.autoDeclare = false;
 
         }
 

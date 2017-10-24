@@ -9,7 +9,6 @@ echo "building... ${1}";
 case "${1}" in
     "start")
         export BUILD_MODE=devel
-        
         cp node_modules/libcore/dist/libcore.js dist/ || exit $?
         node_modules/.bin/rollup --config || exit $?
         ;;

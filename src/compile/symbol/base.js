@@ -72,10 +72,7 @@ Symbol.prototype = {
                                 constantify === true || constantify === false ?
                                     constantify : this.constant);
 
-            if (this.autoFinalize) {
-                this.finalize();
-            }
-            else if (this.autoDeclare) {
+            if (this.autoDeclare) {
                 this.declare();
             }
         }
@@ -84,16 +81,21 @@ Symbol.prototype = {
     declare: function () {
         var compiler = this.compiler;
 
-        this.declared = true;
-
         // finalize first
-        if (!this.finalized) {
-            this.finalize();
+        // if (!this.finalized) {
+        //     this.finalize();
+
+        // }
+        // else {
+        if (!this.declared) {
+            this.declared = true;
+
+            this.onDeclare(compiler, this.value);
+
+            this.generateCodeLines([this.declareCode]);
+
         }
-
-        this.onDeclare(compiler, this.value);
-
-        this.generateCodeLines([this.declareCode]);
+        
 
         return this;
 
@@ -106,23 +108,27 @@ Symbol.prototype = {
         return this.declare();
     },
 
-    finalize: function () {
+    // finalize: function () {
 
-        if (!this.finalized) {
-            this.finalized = true;
+    //     if (!this.declared) {
+    //         this.declare();
+    //         console.log("declared! ", this.id);
+    //     }
+
+    //     if (!this.finalized) {
+    //         this.finalized = true;
             
-            this.onFinalize(this.compiler);
+    //         this.onFinalize(this.compiler);
 
-            this.generateCodeLines(this.finalizeCode);
+    //         this.generateCodeLines(this.finalizeCode);
+    //         console.log("finalized! ", this.id);
 
-        }
+    //     }
 
-        if (!this.declared) {
-            this.declare();
-        }
+        
 
-        return this;
-    },
+    //     return this;
+    // },
 
     typeofSymbol: function () {
         return this.createVariableOfMe('typeof ' + this.id);
@@ -147,7 +153,7 @@ Symbol.prototype = {
             isArray = array,
             isString = string,
             pending = this.pendingCodes,
-            commit = this.finalized || force === true;
+            commit = this.declared || force === true;
         var c, l, item, pl;
 
         if (isString(value)) {

@@ -3,7 +3,6 @@
 import {
             string,
             number,
-            method,
             contains,
             jsonFill,
             jsonFind,
@@ -15,8 +14,18 @@ import {
             escapeString
         } from "../helper/string.js";
 
-function Helper() {
 
+import {
+            get as getTransformer
+        } from "../transformer/registry.js";
+
+import {
+            get as getIntent
+        } from "../intent/registry.js";
+
+function Helper() {
+    this.transformCache = {};
+    this.intentCache = {};
 }
 
 Helper.prototype = {
@@ -71,32 +80,48 @@ Helper.prototype = {
         return paths.join('');
     },
 
-    // access: function (subject, property) {
+    getTransformer: function(name) {
+        var access = ':' + name,
+            list = this.transformCache;
+        var found;
 
-    //     if (!object(subject) && !array(subject) &&
-    //         !string(property) && !number(property)) {
-    //         return undefined;
-    //     }
-
-    //     return property in subject ?
-    //                 subject[property] : undefined;
-    // },
-
-    getTransformer(name) {
-        var transformer;
-
-        if (string(name) && name in this) {
-            transformer = this[name];
-            if (method(transformer)) {
-                return transformer;
-            }
+        if (access in list) {
+            return list[access];
         }
 
-        return null;
+        found = getTransformer(name);
+        if (!found) {
+            throw new Error("Transformer named " + name + " do not exist.");
+        }
+
+        return (list[access] = found);
+
+    },
+
+    getIntent: function(name) {
+        var access = ':' + name,
+            list = this.intentCache;
+        var found;
+
+        if (access in list) {
+            return list[access];
+        }
+
+        found = getIntent(name);
+        if (!found) {
+            throw new Error("Intent named " + name + " do not exist.");
+        }
+
+        return (list[access] = found);
+    },
+
+    execIntent: function (name, value) {
+        return this.getIntent(name)(this, value);
     }
+
     
 };
 
-export { Context };
+export { Helper };
 
-export default Context;
+export default Helper;

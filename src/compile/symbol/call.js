@@ -45,7 +45,7 @@ export default
                 args = this.arguments;
 
             if (reference) {
-                reference.finalize();
+                reference.declare();
 
                 args = this.getArgumentsCode();
 
@@ -81,7 +81,7 @@ export default
             if (reference && reference.type === "identifier") {
                 parent = reference.accessParent;
                 if (parent) {
-                    parent.finalize();
+                    parent.declare();
                     return parent.id;
                 }
             }
