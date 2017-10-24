@@ -16,7 +16,6 @@ export default
         append(item, name) {
             var list = this.dataAccess;
             list[list.length] = name;
-            console.log("append! ", item, name);
             return super.append(item);
         }
         

@@ -15,13 +15,13 @@ import {
             escapeString
         } from "../helper/string.js";
 
-function Context() {
+function Helper() {
 
 }
 
-Context.prototype = {
+Helper.prototype = {
 
-    constructor: Context,
+    constructor: Helper,
 
     contains: contains,
     number: number,

@@ -22,8 +22,8 @@ module.exports = [
 // transformer
     "transform",        [
                             /\-\>/,
-                            /then/,
-                            /\|\>/
+                            /\|\>/,
+                            /then/
                         ],
 
 // arithmetic operators
@@ -189,7 +189,7 @@ module.exports = [
                         ],
 
     "ArgumentList",     [
-                            "Javascript",
+                            "Assignment",
                             ["ArgumentList", ",", "Assignment"]
                         ],
 
@@ -208,7 +208,8 @@ module.exports = [
                             "null",
                             "undefined",
                             "string",
-                            "Number"
+                            "Number",
+                            "json_path"
                         ],
     
     "Primary",          [

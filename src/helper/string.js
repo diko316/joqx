@@ -1,6 +1,9 @@
 'use strict';
 
 import {
+            jsonParsePath
+        } from "libcore";
+import {
             string,
             number
         } from "libcore";
@@ -57,4 +60,19 @@ export
         return string(subject) ?
                     NUMERIC_RE.test(subject) :
                     number(subject);
+    }
+
+export
+    function jsonRecodeArrayPath(jsonString) {
+        var path = jsonParsePath(jsonString),
+            cescape = escapeString,
+            l = path && path.length;
+
+        if (l) {
+            for (; l--;) {
+                path[l] = '"' + cescape(path[l]) + '"';
+            }
+            return '[' + path.join(',') + ']';
+        }
+        return '[]';
     }

@@ -1,15 +1,17 @@
 'use strict';
 
-// import {
-//             createReference,
-//             assign
-//         } from "./helper/accessor.js";
+
+
+import {
+            jsonRecodeArrayPath
+        } from "../helper/string.js";
 
 // import {
 //             createArgumentSymbol,
 //         } from "./helper/argument.js";
 
-var TYPE_ARGUMENTS = "arguments";
+var TYPE_ARGUMENTS = "arguments",
+    TYPE_IDENTIFIER = "identifier";
 
 export
     function compileRule(compiler, lexeme) {
@@ -20,7 +22,6 @@ export
         switch (lexeme.name) {
         // relay all
         case "Number":
-        case "Literal":
         case "Javascript":
             value = value[0];
             break;
@@ -28,6 +29,12 @@ export
         default:
             switch (lexeme.rule) {
             // relay rules
+            
+            case "2:Literal":
+            case "3:Literal":
+            case "4:Literal":
+            case "5:Literal":
+            case "6:Literal":
             case "1:Primary":
             case "2:Primary":
             case "3:Primary":
@@ -52,6 +59,31 @@ export
                 value = value[0];
                 break;
 
+            // void
+            case "1:Void":
+                value = compiler.createSymbol("void(" + value[1].id + ')',
+                                                TYPE_IDENTIFIER).
+                                setSymbolAccess().
+                                addDependency(value[1]);
+                break;
+            
+            // this
+            case "1:Literal":
+                value = compiler.createSymbol(compiler.contextSymbol,
+                                                TYPE_IDENTIFIER).
+                                setSymbolAccess();
+                break;
+
+
+            case "7:Literal":
+                value = value[0];
+                value = value.substring(1, value.length);
+                value = compiler.createSymbol(compiler.helperSymbol.id +
+                            '.get(' + jsonRecodeArrayPath(value) + ')',
+                            "identifier").
+                            setSymbolAccess();
+                break;
+
             // relay group
             case "1:Group":
                 value = value[1];
@@ -59,7 +91,8 @@ export
             
             // array
             case "1:Array":
-                value = compiler.createSymbol("[]", "identifier").
+                value = compiler.createSymbol("[]",
+                                                TYPE_IDENTIFIER).
                             setSymbolAccess();
                 break;
 
@@ -79,7 +112,7 @@ export
 
             // object
             case "1:Object":
-                value = compiler.createSymbol("{}", "identifier").
+                value = compiler.createSymbol("{}", TYPE_IDENTIFIER).
                             setSymbolAccess();
                 break;
 
@@ -276,7 +309,7 @@ export
                 item2 = value[4];
                 condition = value[0];
 
-                value = compiler.createSymbol(null, "identifier").
+                value = compiler.createSymbol(null, TYPE_IDENTIFIER).
                             setSymbolAccess().
                             addDependency(condition);
 
@@ -295,14 +328,6 @@ export
                 value.addDependency(item1).
                     addDependency(item2);
 
-                // value = compiler.createSymbol(
-                //                 value[0].id + ' ? ' +
-                //                 positive.id + ' : ' + negative.id,
-                //                 "identifier").
-                //             setSymbolAccess().
-                //             addDependency(value[0]).
-                //             addDependency(positive).
-                //             addDependency(negative);
                 break;
 
             // assignment
@@ -353,8 +378,17 @@ export
 
             // last
             case "1:Joqx":
-                value[0].finalize();
                 value = value[0];
+                break;
+
+            case "2:Joqx":
+                value = value[1];
+                break;
+
+            case "1:Joqx'":
+                value = value[0];
+                value.finalize();
+                compiler.nullFill(value.id);
                 compiler.appendCode([
                     'return ', value.id
                 ]);

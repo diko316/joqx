@@ -4,7 +4,7 @@ import { iterator } from "./parser/index.js";
 
 import { Compile } from "./compile/class.js";
 
-import { Context } from "./context/class.js";
+import { Context } from "./context/helper.js";
 
 import handleTerminal from "./compile/terminal.js";
 
@@ -46,9 +46,9 @@ function compile(subject) {
 
         generated = context.generate();
 
-        //compiled = new F('helper, context', generated);
-
         console.log(generated);
+
+        //compiled = new F('helper, context', generated);
 
         return exec;
 

@@ -17,7 +17,9 @@ import { compile } from "./index.js";
 
 //compile('1 * 3 -> test.name(filterValue)');
 
-compile('[1, 2, 3] |> sort -> update(90) -> buang(k)');
+//compile('[1, 2, 3] |> sort -> update({a: 1}) -> buang(k)');
+
+compile('void(true)');
 
 
 

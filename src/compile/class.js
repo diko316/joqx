@@ -98,6 +98,30 @@ export
 
         }
 
+        nullFill(ignoreSymbols) {
+            var symbols = this.symbols;
+            var l, index;
+            if (string(ignoreSymbols)) {
+                ignoreSymbols = [ignoreSymbols];
+            }
+
+            // filter
+            if (array(ignoreSymbols)) {
+                symbols = symbols.slice(0);
+                for (l = ignoreSymbols.length; l--;) {
+                    index = symbols.indexOf(ignoreSymbols[l]);
+                    if (index !== -1) {
+                        symbols.splice(index, 1);
+                    }
+                }
+                
+            }
+
+            this.appendCode(symbols.join(' = ') + ' = null');
+
+            return this;
+        }
+
         generate() {
             var symbols = this.symbols.slice(0),
                 configs = this.symbolConfig,
