@@ -14,6 +14,8 @@ export default
         constructor(compiler) {
             super(compiler);
 
+            this.autoDeclare = false;
+
             this.data = [];
 
         }
@@ -48,13 +50,17 @@ export default
 
             for (; l--;) {
                 symbol = data[++c];
-                console.log("is already finalized? ", symbol.id, " = ", symbol.finalized);
                 symbol.finalize();
-                generated[c] = symbol.id;
+                generated[c] = this.generateItemCode(symbol, c);
+                
             }
 
             return generated.join(',');
 
+        }
+
+        generateItemCode(symbol) {
+            return symbol.id;
         }
         
     }

@@ -47,19 +47,7 @@ export
 
             return symbol;
         }
-
-        // createConstant(value, type) {
-        //     var lookup = this.constantLookup;
-            
-
-        //     if (contains(lookup, value)) {
-        //         return lookup[value].id;
-        //     }
-            
-        //     return this.createSymbol(value, type, true);
-            
-        // }
-
+        
         getSymbol(id) {
             var symbols = this.symbols,
                 index = symbols.indexOf(id);

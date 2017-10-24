@@ -63,7 +63,10 @@ export default
         }
 
         getArgumentsCode() {
-            var args = this.getCodeValue();
+            var args = this.arguments;
+
+            args = args ?
+                        args.getCodeValue() : '';
 
             return this.constructorCall ?
                         args :

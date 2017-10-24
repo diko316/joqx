@@ -42,16 +42,23 @@ function compile(subject) {
         
     }
 
-    generated = context.generate();
+    if (!iterator.error && iterator.completed) {
 
-    console.log(generated);
+        generated = context.generate();
 
-    console.log(iterator);
+        //compiled = new F('helper, context', generated);
 
-    //compiled = new F('helper, context', generated);
-    //console.log("compiled ", compiled.toString());
+        console.log(generated);
 
-    return exec;
+        return exec;
+
+    
+    
+    }
+
+    return null;
+
+    
 
 }
 

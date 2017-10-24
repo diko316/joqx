@@ -22,7 +22,8 @@ module.exports = [
 // transformer
     "transform",        [
                             /\-\>/,
-                            /then/
+                            /then/,
+                            /\|\>/
                         ],
 
 // arithmetic operators
@@ -150,7 +151,7 @@ module.exports = [
 
 // Group
     "Group",            [
-                            ["(", "Javascript", ")"]
+                            ["(", "Assignment", ")"]
                         ],
 
 // Array
@@ -160,8 +161,8 @@ module.exports = [
                         ],
 
     "Elements",         [
-                            "Javascript",
-                            ["Elements", ",", "Javascript"],
+                            "Assignment",
+                            ["Elements", ",", "Assignment"],
                         ],
 
 // Object
@@ -176,9 +177,9 @@ module.exports = [
                         ],
 
     "Property",         [
-                            ["identifier", ":", "Javascript"],
-                            ["string", ":", "Javascript"],
-                            ["Number", ":", "Javascript"]
+                            ["identifier", ":", "Assignment"],
+                            ["string", ":", "Assignment"],
+                            ["Number", ":", "Assignment"]
                         ],
 
 // Function Call
@@ -189,7 +190,7 @@ module.exports = [
 
     "ArgumentList",     [
                             "Javascript",
-                            ["ArgumentList", ",", "Javascript"]
+                            ["ArgumentList", ",", "Assignment"]
                         ],
 
     "Delete",           [
@@ -225,7 +226,7 @@ module.exports = [
                             "Primary",
                             "identifier",
                             ["Updatable", ".", "identifier"],
-                            ["Updatable", "[", "Javascript", "]"]
+                            ["Updatable", "[", "Assignment", "]"]
                         ],
 
     
@@ -308,7 +309,7 @@ module.exports = [
 // Ternary
     "Conditional",      [
                             "LogicalOr",
-                            ["LogicalOr", "?", "Javascript", ":", "Javascript"]
+                            ["LogicalOr", "?", "Assignment", ":", "Assignment"]
                         ],
 
 

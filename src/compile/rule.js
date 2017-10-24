@@ -15,6 +15,7 @@ export
     function compileRule(compiler, lexeme) {
         var cache = lexeme.value,
             value = cache;
+        var condition, item1, item2;
         
         switch (lexeme.name) {
         // relay all
@@ -55,7 +56,54 @@ export
             case "1:Group":
                 value = value[1];
                 break;
+            
+            // array
+            case "1:Array":
+                value = compiler.createSymbol("[]", "identifier").
+                            setSymbolAccess();
+                break;
+
+            case "2:Array": // relay Elements
+                value = value[1];
+                break;
+
+            case "1:Elements":
+                value = compiler.createSymbol(null, "array").
+                            append(value[0]);
+                break;
+
+            case "2:Elements":
+                value = value[0].
+                            append(value[2]);
+                break;
+
+            // object
+            case "1:Object":
+                value = compiler.createSymbol("{}", "identifier").
+                            setSymbolAccess();
+                break;
+
+            case "2:Object":
+                value = value[1];
+                break;
+
+            case "1:Properties":
+                value = value[0];
+                value = compiler.createSymbol(null, "object").
+                            append(value[1], value[0]);
+                break;
+            
+            case "2:Properties":
+                item1 = value[2];
+                value = value[0].append(item1[1], item1[0]);
+                break;
+
+            case "1:Property": // relay
+            case "2:Property": // relay
+            case "3:Property": // relay
+                value = [value[0].value, value[2]];
                 
+                break;
             
             
             // arguments
@@ -223,6 +271,40 @@ export
                 value = value[0].or(value[2]);
                 break;
 
+            case "2:Conditional":
+                item1 = value[2];
+                item2 = value[4];
+                condition = value[0];
+
+                value = compiler.createSymbol(null, "identifier").
+                            setSymbolAccess().
+                            addDependency(condition);
+
+                item1 = compiler.createSymbol(null, "block").
+                                setStatement([
+                                    'if (', condition.id, ')'
+                                ]).
+                                setResultIdentifier(value.id).
+                                addDependency(item1);
+                
+                item2 = compiler.createSymbol(null, "block").
+                                setStatement('else').
+                                setResultIdentifier(value.id).
+                                addDependency(item2);
+
+                value.addDependency(item1).
+                    addDependency(item2);
+
+                // value = compiler.createSymbol(
+                //                 value[0].id + ' ? ' +
+                //                 positive.id + ' : ' + negative.id,
+                //                 "identifier").
+                //             setSymbolAccess().
+                //             addDependency(value[0]).
+                //             addDependency(positive).
+                //             addDependency(negative);
+                break;
+
             // assignment
             case "2:Assignment":
             case "3:Assignment":
@@ -243,16 +325,7 @@ export
 
             // transformer namespace
             case "1:Namespace":
-                // value = compiler.contextSymbol.access(value[0], true).
-                //             setAccessOrigin(compiler.helperSymbol.id);
-
-                // value = compiler.createSymbol('')
                 value = value[0].setSymbolAccess();
-                // value.value = '|' + value.value;
-                // value = compiler.contextSymbol.access(value, true).
-                //             setAccessOrigin(compiler.helperSymbol.id);
-                // console.log("NS VALUE: ", value.value);
-                                
                 break;
 
             case "2:Namespace":

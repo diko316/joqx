@@ -22,9 +22,28 @@ export default
             return this;
         }
 
+        getDeclarationValue() {
+            var reference = this.reference,
+                args = this.arguments;
+
+            if (reference) {
+                reference.finalize();
+
+                args = this.getArgumentsCode();
+
+                return ([ reference.id, '(', args, ')']).join('');
+
+            }
+            return null;
+
+        }
+
         getArgumentsCode() {
-            var args = this.getCodeValue(),
+            var args = this.arguments,
                 base = this.baseArgument;
+
+            args = args ?
+                        args.getCodeValue() : '';
 
             if (base) {
                 args = args ?
@@ -32,9 +51,7 @@ export default
                              base.id;
             }
 
-            return this.constructorCall ?
-                        args :
-                        this.getCallContext() + (args ? ',' + args : '');
+            return args;
 
         }
     }

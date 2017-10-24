@@ -15,9 +15,9 @@ import { compile } from "./index.js";
 //                         }));
 
 
-//compile('1 -> test.name -> again');
+//compile('1 * 3 -> test.name(filterValue)');
 
-compile('1 + 2 * 3');
+compile('[1, 2, 3] |> sort -> update(90) -> buang(k)');
 
 
 
