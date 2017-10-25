@@ -29,6 +29,9 @@ Symbol.prototype = {
     finalized: false,
     initialized: false,
 
+    inFixCode: null,
+    postFixCode: null,
+
     onInitialize: function (compiler, value, constantify) {
         var symbols = compiler.symbols,
             index = symbols.length,
@@ -39,6 +42,7 @@ Symbol.prototype = {
         // register
         this.constant = constantify;
         this.value = value;
+        this.references = [];
 
         if (constantify) {
             symbols.splice(0, 0, id);
@@ -52,15 +56,29 @@ Symbol.prototype = {
     },
 
     onDeclare: function () {
-        var value = this.getDeclarationValue();
+        var list = this.references,
+            len = list.length,
+            c = -1;
+        var item, value;
+
+        for (; len--;) {
+            item = list[++c];
+            item.declare();
+        }
+
+        value = this.getDeclarationValue();
 
         if (value) {
-            this.declareCode = [this.id, ' = ', value];
+            this.generateCodeLines([[this.id, ' = ', value]]);
         }
     },
 
-    onFinalize: function () {
-        
+    onDeclarePostFix: function (postfix) {
+        this.generateCodeLines(postfix);
+    },
+
+    onDeclareInfix: function (infix) {
+        this.generateCodeLines(infix);
     },
 
     initialize: function (value, constantify) {
@@ -79,23 +97,34 @@ Symbol.prototype = {
     },
 
     declare: function () {
-        var compiler = this.compiler;
+        var compiler = this.compiler,
+            postfix = this.postFixCode,
+            infix = this.inFixCode;
 
-        // finalize first
-        // if (!this.finalized) {
-        //     this.finalize();
-
-        // }
-        // else {
+        // run declaration
         if (!this.declared) {
             this.declared = true;
 
-            this.onDeclare(compiler, this.value);
+            this.onDeclare(compiler);
+        }
 
-            this.generateCodeLines([this.declareCode]);
+        // run infix
+        if (infix) {
+            this.onDeclareInfix(infix);
 
+            delete this.inFixCode;
         }
         
+        // postfix code
+        if (postfix) {
+            this.onDeclarePostFix(postfix);
+
+            // run once
+            delete this.postFixCode;
+
+            // should redeclare when needed again
+            delete this.declared;
+        }
 
         return this;
 
@@ -108,27 +137,17 @@ Symbol.prototype = {
         return this.declare();
     },
 
-    // finalize: function () {
+    addDependency: function (symbol) {
+        var list = this.references;
 
-    //     if (!this.declared) {
-    //         this.declare();
-    //         console.log("declared! ", this.id);
-    //     }
+        if (!(symbol instanceof Symbol)) {
+            throw new Error("Invalid [symbol] dependency.");
+        }
 
-    //     if (!this.finalized) {
-    //         this.finalized = true;
-            
-    //         this.onFinalize(this.compiler);
+        list[list.length] = symbol;
 
-    //         this.generateCodeLines(this.finalizeCode);
-    //         console.log("finalized! ", this.id);
-
-    //     }
-
-        
-
-    //     return this;
-    // },
+        return this;
+    },
 
     typeofSymbol: function () {
         return this.createVariableOfMe('typeof ' + this.id);
@@ -179,6 +198,57 @@ Symbol.prototype = {
         }
 
         return this;
+    },
+
+    generateInfix: function (code) {
+        var current = this.inFixCode,
+            isArray = array,
+            isString = string;
+        var c, l, item, cl;
+
+        if (!current) {
+            current = this.inFixCode = [];
+        }
+        
+        if (isString(code)) {
+            code = [code];
+        }
+
+        if (isArray(code)) {
+            cl = current.length;
+            for (c = -1, l = code.length; l--;) {
+                item = code[++c];
+                if (isArray(item) || isString(item)) {
+                    current[cl++] = item;
+                }
+            }
+        }
+
+    },
+
+    generatePostFix: function (code) {
+        var current = this.postFixCode,
+            isArray = array,
+            isString = string;
+        var c, l, item, cl;
+
+        if (!current) {
+            current = this.postFixCode = [];
+        }
+        
+        if (isString(code)) {
+            code = [code];
+        }
+
+        if (isArray(code)) {
+            cl = current.length;
+            for (c = -1, l = code.length; l--;) {
+                item = code[++c];
+                if (isArray(item) || isString(item)) {
+                    current[cl++] = item;
+                }
+            }
+        }
     },
 
     getHelperId: function () {

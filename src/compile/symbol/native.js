@@ -122,10 +122,11 @@ export default
                                 " for " + operand.type);
             }
 
-            return operand.createVariableOfMe([this.id, ' ',
-                                                operation, ' ',
-                                                operand.id]).
-                        addDependency(this);
+            return this.createVariableOfMe([this.id, ' ',
+                                            operation, ' ',
+                                            operand.id]).
+                        addDependency(operand);
+
 
         }
 

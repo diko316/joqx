@@ -48,7 +48,7 @@ function compile(subject) {
 
         generated = context.generate();
 
-        //console.log(generated);
+        console.log(generated);
 
         compiled = new F('helper, context', generated);
 

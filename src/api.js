@@ -9,8 +9,8 @@ import compile from "./compile.js";
 
 
 const API = {
-            registerIntent: registerIntent,
-            registerTransformer: registerTransformer,
+            registerIntent: intent,
+            registerTransformer: transformer,
             compile: compile
         };
 
@@ -21,15 +21,15 @@ export {
         };
 
 export
-    function registerIntent(name, intent) {
-        regIntent(name, intent);
-        return regIntent;
+    function intent(name, intentMethod) {
+        regIntent(name, intentMethod);
+        return API;
     }
 
 export
-    function registerTransformer(name, transformer) {
-        regTransformer(name, transformer);
-        return regTransformer;
+    function transformer(name, transformerMethod) {
+        regTransformer(name, transformerMethod);
+        return API;
     }
 
 
