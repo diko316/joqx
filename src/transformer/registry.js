@@ -6,6 +6,8 @@ import {
             createRegistry
         } from "libcore";
 
+import { promiseGuard } from "../executor.js";
+
 
 const REGISTRY = createRegistry(),
     NAME_RE = /[a-zA-Z\_\$][a-zA-Z0-9\_\$]*(\.[a-zA-Z\_\$][a-zA-Z0-9\_\$]*)*/;
@@ -32,7 +34,7 @@ export
                             " already exist");
         }
 
-        registry.set(name, transformer);
+        registry.set(name, promiseGuard(transformer));
 
     }
 
@@ -47,4 +49,3 @@ export
         var registry = REGISTRY;
         return registry.exists(name) ? registry.get(name) : null;
     }
-    

@@ -6,7 +6,8 @@ import {
             contains,
             jsonFill,
             jsonFind,
-            jsonUnset
+            jsonUnset,
+            thenable
         } from "libcore";
 
 import {
@@ -22,6 +23,8 @@ import {
 import {
             get as getIntent
         } from "../intent/registry.js";
+
+
 
 function Helper() {
     this.transformCache = {};
@@ -115,8 +118,16 @@ Helper.prototype = {
         return (list[access] = found);
     },
 
-    execIntent: function (name, value) {
+    intent: function (name, value) {
         return this.getIntent(name)(this, value);
+    },
+
+    transform: function (name, value) {
+        return this.getTransformer(name)(this, value);
+    },
+
+    formatReturn: function (value) {
+        return thenable(value) ? value : Promise.resolve(value);
     }
 
     

@@ -9,8 +9,8 @@ import compile from "./compile.js";
 
 
 const API = {
-            registerIntent: intent,
-            registerTransformer: transformer,
+            intent: intent,
+            transformer: transformer,
             compile: compile
         };
 

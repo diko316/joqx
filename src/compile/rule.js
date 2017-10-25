@@ -381,7 +381,7 @@ export
                 item1 = value[0];
                 item2 = value[1];
                 value = compiler.createSymbol(compiler.helperSymbol.id +
-                                '.execIntent("' +
+                                '.intent("' +
                                     escapeString(item1.
                                         substring(1, item1.length)) + '",' +
                                         item2.id + ')',
@@ -395,6 +395,10 @@ export
             case "1:Joqx'":
                 value = value[0];
                 value.declare();
+                compiler.appendCode([
+                    value.id, ' = ', compiler.helperSymbol.id,
+                                '.formatReturn(', value.id, ')'
+                ]);
                 compiler.nullFill(value.id);
                 compiler.appendCode([
                     'return ', value.id

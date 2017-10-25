@@ -17,17 +17,16 @@ var compiled;
 
 
 
-// registerIntent('plus1', function (helper, value) {
-//     return value + 1;
-// });
+intent('plus1', function (helper, value) {
+        return value + 1;
+    }).
+    transformer('minus2', function (helper, value) {
+        return value - 2;
+    });
 
-// registerTransformer('minus2', function (helper, value) {
-//     return value - 2;
-// });
+//compiled = compile('res = buang.no ? 2 : test ? 1 : 2');
 
-compiled = compile('res = buang.no ? 2 : test ? 1 : 2');
-
-//compiled = compile('?plus1 buang.yes |> minus2');
+compiled = compile('?plus1 buang.yes |> minus2');
 
 
 
