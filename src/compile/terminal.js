@@ -29,9 +29,11 @@ function compileTerminal(context, lexeme) {
     case "null":
     case "undefined":
     case "identifier":
+    case "jsonpath":
         value = context.createSymbol(value, name);
         break;
     }
+    
 
     if (cache !== value) {
         context.updateIterator(value);

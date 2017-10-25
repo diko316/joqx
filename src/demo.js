@@ -4,7 +4,7 @@ import { compile, intent, transformer } from "./index.js";
 
 var context = {
         "buang": {
-            "yes": 2
+            "yes++": 2
         },
         "test": "yes"
     };
@@ -13,20 +13,18 @@ var compiled;
 
 
 
-
-
-
-
-intent('plus1', function (helper, value) {
+intent('plus1', function (value) {
         return value + 1;
     }).
-    transformer('minus2', function (helper, value) {
+    transformer('minus2', function (value) {
         return value - 2;
     });
 
 //compiled = compile('res = buang.no ? 2 : test ? 1 : 2');
 
-compiled = compile('?plus1 buang.yes |> minus2');
+//compiled = compile('?plus1 buang.yes |> minus2');
+
+compiled = compile('++@buang[yes++]');
 
 
 

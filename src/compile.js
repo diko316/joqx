@@ -1,5 +1,7 @@
 'use strict';
 
+import { string } from "libcore";
+
 import { iterator } from "./parser/index.js";
 
 import { Compile } from "./compile/class.js";
@@ -12,11 +14,10 @@ import handleRule from "./compile/rule.js";
 
 function compile(subject) {
     var F = compile.constructor,
-        context = new Compile(iterator),
         compileTerminal = handleTerminal,
         compileRule = handleRule;
 
-     var lexeme, compiled, generated;
+    var lexeme, compiled, generated, compiler;
 
     function exec(contextObject) {
         try {
@@ -28,25 +29,26 @@ function compile(subject) {
         return undefined;
     }
 
-    var value;
+    if (!string(subject)) {
+        throw new Error("Invalid String [subject] parameter.");
+    }
+
+    compiler = new Compile(iterator);
 
     iterator.set(subject);
     lexeme = iterator.next();
 
     for (; lexeme; lexeme = iterator.next()) {
-
-        // test
-        value = lexeme.value;
         
         // for terminal
         (lexeme.terminal ?
             compileTerminal :
-            compileRule)(context, lexeme);
+            compileRule)(compiler, lexeme);
     }
 
     if (!iterator.error && iterator.completed) {
 
-        generated = context.generate();
+        generated = compiler.generate();
 
         console.log(generated);
 

@@ -3,7 +3,7 @@
 
 
 import {
-            jsonRecodeArrayPath,
+            //jsonRecodeArrayPath,
             escapeString
         } from "../helper/string.js";
 
@@ -31,6 +31,7 @@ export
             case "4:Literal":
             case "5:Literal":
             case "6:Literal":
+            case "7:Literal":
             case "1:Primary":
             case "2:Primary":
             case "3:Primary":
@@ -71,14 +72,15 @@ export
                 break;
 
 
-            case "7:Literal":
-                value = value[0];
-                value = value.substring(1, value.length);
-                value = compiler.createSymbol(compiler.helperSymbol.id +
-                            '.get(' + jsonRecodeArrayPath(value) + ')',
-                            "identifier").
-                            setSymbolAccess();
-                break;
+            // case "7:Literal":
+            //     value = value[0];
+            //     value = value.substring(1, value.length);
+            //     value = compiler.createSymbol(compiler.helperSymbol.id +
+            //                     '.get(' + compiler.contextSymbol.id + ',' +
+            //                         jsonRecodeArrayPath(value) + ')',
+            //                     "identifier").
+            //                         setSymbolAccess();
+            //     break;
 
             // relay group
             case "1:Group":

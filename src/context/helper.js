@@ -127,7 +127,8 @@ Helper.prototype = {
     },
 
     formatReturn: function (value) {
-        return thenable(value) ? value : Promise.resolve(value);
+        return thenable(value) ?
+                    value : Promise.resolve(value);
     }
 
     
