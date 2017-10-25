@@ -139,6 +139,15 @@ export
                 }
             }
 
+            // add try catch
+            if (code.length) {
+                code.splice(2, 0, 'try { // catch all errors');
+                code.splice(code.length, 0,
+                    '} catch (e) { // end try',
+                        'return ' + this.helperSymbol.id + '.reject(e)', 
+                    '} // end catch');
+            }
+
             // declare variables
             if (symbols.length) {
                 code.splice(0, 0, 'var ' + symbols.join(','));

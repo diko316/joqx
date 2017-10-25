@@ -1563,6 +1563,15 @@ var Compile = function Compile(iterator) {
             }
         }
 
+        // add try catch
+        if (code.length) {
+            code.splice(2, 0, 'try { // catch all errors');
+            code.splice(code.length, 0,
+                '} catch (e) { // end try',
+                    'return ' + this.helperSymbol.id + '.reject(e)', 
+                '} // end catch');
+        }
+
         // declare variables
         if (symbols.length) {
             code.splice(0, 0, 'var ' + symbols.join(','));
@@ -1675,6 +1684,10 @@ Helper.prototype = {
     formatReturn: function (value) {
         return libcore.thenable(value) ?
                     value : Promise.resolve(value);
+    },
+
+    reject: function (error) {
+        return Promise.reject(error);
     }
 
     
@@ -2116,20 +2129,25 @@ function compileRule(compiler, lexeme) {
         }
     }
 
+var helper = new Helper();
+
 function compile(subject) {
     var F = compile.constructor,
         compileTerminal$$1 = compileTerminal,
-        compileRule$$1 = compileRule;
+        compileRule$$1 = compileRule,
+        compiled = null,
+        walk = iterator;
 
-    var lexeme, compiled, generated, compiler;
+    var lexeme, generated, compiler;
 
     function exec(contextObject) {
         try {
-            return compiled(new Helper(), contextObject);
+            return compiled(helper, contextObject);
         }
         catch (e) {
             console.warn(e);
         }
+        
         return undefined;
     }
 
@@ -2137,12 +2155,16 @@ function compile(subject) {
         throw new Error("Invalid String [subject] parameter.");
     }
 
-    compiler = new Compile(iterator);
+    compiler = new Compile(walk);
+    
+    walk.reset();
+    walk.set(subject);
 
-    iterator.set(subject);
-    lexeme = iterator.next();
+    walk.completed = false;
 
-    for (; lexeme; lexeme = iterator.next()) {
+    lexeme = walk.next();
+
+    for (; lexeme; lexeme = walk.next()) {
         
         // for terminal
         (lexeme.terminal ?
@@ -2150,7 +2172,7 @@ function compile(subject) {
             compileRule$$1)(compiler, lexeme);
     }
 
-    if (!iterator.error && iterator.completed) {
+    if (!walk.error && walk.completed) {
 
         generated = compiler.generate();
 

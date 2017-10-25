@@ -35,12 +35,12 @@ var compiled;
 
 //compiled = compile('this.buang.yes');
 
-compiled = compile('this.buang');
+// compiled = compile('this.buang');
 
-console.log(compiled(testContext));
+// console.log(compiled(testContext));
 
 
-compiled = compile('this.inner.deepInner');
+compiled = compile('this = 2');
 
 console.log(compiled(testContext));
 
