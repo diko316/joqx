@@ -66,21 +66,11 @@ export
             
             // this
             case "1:Literal":
-                value = compiler.createSymbol(compiler.contextSymbol,
+                value = compiler.createSymbol(compiler.contextSymbol.id,
                                                 TYPE_IDENTIFIER).
                                 setSymbolAccess();
                 break;
 
-
-            // case "7:Literal":
-            //     value = value[0];
-            //     value = value.substring(1, value.length);
-            //     value = compiler.createSymbol(compiler.helperSymbol.id +
-            //                     '.get(' + compiler.contextSymbol.id + ',' +
-            //                         jsonRecodeArrayPath(value) + ')',
-            //                     "identifier").
-            //                         setSymbolAccess();
-            //     break;
 
             // relay group
             case "1:Group":

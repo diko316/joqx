@@ -80,6 +80,7 @@ module.exports = function(config) {
                     main: true,
                     browser: true
                 }),
+                require('rollup-plugin-json')(),
                 require('rollup-plugin-commonjs')({
                     ignoreGlobal: true
                 }),

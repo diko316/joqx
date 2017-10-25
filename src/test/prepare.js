@@ -1,8 +1,9 @@
 'use strict';
 
-import MODULE from "../index.js";
 
-global.everything = MODULE;
+import compiler from "../index.js";
 
+global.main = compiler;
 
-console.log("inside! ");
+export default compiler;
+

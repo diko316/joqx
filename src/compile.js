@@ -12,20 +12,25 @@ import handleTerminal from "./compile/terminal.js";
 
 import handleRule from "./compile/rule.js";
 
+const helper = new Helper();
+
 function compile(subject) {
     var F = compile.constructor,
         compileTerminal = handleTerminal,
-        compileRule = handleRule;
+        compileRule = handleRule,
+        compiled = null,
+        walk = iterator;
 
-    var lexeme, compiled, generated, compiler;
+    var lexeme, generated, compiler;
 
     function exec(contextObject) {
         try {
-            return compiled(new Helper(), contextObject);
+            return compiled(helper, contextObject);
         }
         catch (e) {
             console.warn(e);
         }
+        
         return undefined;
     }
 
@@ -33,12 +38,16 @@ function compile(subject) {
         throw new Error("Invalid String [subject] parameter.");
     }
 
-    compiler = new Compile(iterator);
+    compiler = new Compile(walk);
+    
+    walk.reset();
+    walk.set(subject);
 
-    iterator.set(subject);
-    lexeme = iterator.next();
+    walk.completed = false;
 
-    for (; lexeme; lexeme = iterator.next()) {
+    lexeme = walk.next();
+
+    for (; lexeme; lexeme = walk.next()) {
         
         // for terminal
         (lexeme.terminal ?
@@ -46,11 +55,11 @@ function compile(subject) {
             compileRule)(compiler, lexeme);
     }
 
-    if (!iterator.error && iterator.completed) {
+    if (!walk.error && walk.completed) {
 
         generated = compiler.generate();
 
-        console.log(generated);
+        //console.log(generated);
 
         compiled = new F('helper, context', generated);
 
