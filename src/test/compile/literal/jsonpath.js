@@ -54,4 +54,22 @@ describe(`Should be able to compile quoted "jsonpath" literal as pointer to
                                 })).not.toThrow();
             });
 
+        it(`3. Should be able to compile "jsonpath" expression and use it to
+            unset context Object property in any depth.`,
+            (done) => {
+                var compiled;
+
+                expect(() => compiled = compile("delete inner.deepInner")).
+                    not.toThrow();
+
+                expect(() => compiled(context).
+                                then(() => {
+                                    expect(typeof context.inner.deepInner).
+                                        toBe("undefined");
+                                    expect("deepInner" in context.inner).
+                                        toBe(false);
+                                    done();
+                                })).not.toThrow();
+            });
+
     });

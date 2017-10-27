@@ -19,7 +19,7 @@ describe(`Should be able to compile "this" keyword that contains existing
         });
 
         it(`1. Should return property of context Object by accessing property
-            identifier with "."`,
+            identifier with "." access operator`,
             (done) => {
                 var compiled;
 
@@ -34,7 +34,7 @@ describe(`Should be able to compile "this" keyword that contains existing
             });
 
         it(`2. Should return deeply nested property of context Object by
-            accessing property identifier with "."`,
+            accessing property identifier with "." access operator`,
             (done) => {
                 var compiled;
 

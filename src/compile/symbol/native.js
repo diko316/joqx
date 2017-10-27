@@ -112,6 +112,7 @@ export default
 // arithmetic
         binaryOperation(operand, operation) {
             var allow = this.allowBinaryOperation;
+            var symbol;
 
             if (!(operand instanceof Base)) {
                 throw new Error("Invalid [operand] parameter.");
@@ -122,10 +123,20 @@ export default
                                 " for " + operand.type);
             }
 
-            return this.createVariableOfMe([this.id, ' ',
-                                            operation, ' ',
-                                            operand.id]).
-                        addDependency(operand);
+            // apply operation
+            switch (operation) {
+            case '**':
+                symbol = this.createVariableOfMe(['Math.pow(', this.id, ',',
+                                                            operand.id, ')']);
+                break;
+
+            default:
+                symbol = this.createVariableOfMe([this.id, ' ',
+                                                operation, ' ',
+                                                operand.id]);
+            }
+
+            return symbol.addDependency(operand);
 
 
         }

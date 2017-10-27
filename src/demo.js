@@ -42,7 +42,10 @@ var compiled;
 
 //compiled = compile('0o143');
 
-compiled = compile('@inner.newInner.value = 5');
+//compiled = compile('@inner.newInner.value = 5');
+
+compiled = compile('result = 1 && inner.deepInner');
+
 
 console.log(compiled(testContext), ' context: ', testContext);
 

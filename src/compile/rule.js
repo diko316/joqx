@@ -228,7 +228,7 @@ export
                 break;
 
             // %
-            case "3:Multiplicative":
+            case "4:Multiplicative":
                 value = value[0].modulo(value[2]);
                 break;
 
@@ -266,6 +266,14 @@ export
                 value = value[0].gte(value[2]);
                 break;
 
+            case "10:Relational":
+                value = value[0].instanceOf(value[2]);
+                break;
+
+            case "11:Relational":
+                value = value[0].inOp(value[2]);
+                break;
+
             case "2:Equality":
                 value = value[0].equal(value[2]);
                 break;
@@ -287,8 +295,8 @@ export
                 value = value[0].and(value[2]);
                 break;
 
-            case "4:LogicalOr":
-            case "5:LogicalOr":
+            case "2:LogicalOr":
+            case "3:LogicalOr":
                 value = value[0].or(value[2]);
                 break;
 

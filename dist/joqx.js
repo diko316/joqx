@@ -546,6 +546,7 @@ var Native = (function (Base) {
 // arithmetic
         Native.prototype.binaryOperation = function binaryOperation (operand, operation) {
             var allow = this.allowBinaryOperation;
+            var symbol;
 
             if (!(operand instanceof Base)) {
                 throw new Error("Invalid [operand] parameter.");
@@ -556,10 +557,20 @@ var Native = (function (Base) {
                                 " for " + operand.type);
             }
 
-            return this.createVariableOfMe([this.id, ' ',
-                                            operation, ' ',
-                                            operand.id]).
-                        addDependency(operand);
+            // apply operation
+            switch (operation) {
+            case '**':
+                symbol = this.createVariableOfMe(['Math.pow(', this.id, ',',
+                                                            operand.id, ')']);
+                break;
+
+            default:
+                symbol = this.createVariableOfMe([this.id, ' ',
+                                                operation, ' ',
+                                                operand.id]);
+            }
+
+            return symbol.addDependency(operand);
 
 
         };
@@ -1975,7 +1986,7 @@ function compileRule(compiler, lexeme) {
                 break;
 
             // %
-            case "3:Multiplicative":
+            case "4:Multiplicative":
                 value = value[0].modulo(value[2]);
                 break;
 
@@ -2013,6 +2024,14 @@ function compileRule(compiler, lexeme) {
                 value = value[0].gte(value[2]);
                 break;
 
+            case "10:Relational":
+                value = value[0].instanceOf(value[2]);
+                break;
+
+            case "11:Relational":
+                value = value[0].inOp(value[2]);
+                break;
+
             case "2:Equality":
                 value = value[0].equal(value[2]);
                 break;
@@ -2034,8 +2053,8 @@ function compileRule(compiler, lexeme) {
                 value = value[0].and(value[2]);
                 break;
 
-            case "4:LogicalOr":
-            case "5:LogicalOr":
+            case "2:LogicalOr":
+            case "3:LogicalOr":
                 value = value[0].or(value[2]);
                 break;
 
