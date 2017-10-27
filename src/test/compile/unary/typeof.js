@@ -51,5 +51,21 @@ describe(`Should be able to compile "typeof" keyword followed by any reference
                                 })).not.toThrow();
             });
 
+
+        it(`2. Should be able to compile "typeof" operator followed by any 
+            object reference and returns the data type in string.`,
+            (done) => {
+                var compiled;
+
+                expect(() => compiled = compile('typeof Test === "function"')).
+                    not.toThrow();
+
+                expect(() => compiled(context).
+                                then((value) => {
+                                    expect(value).toBe(true);
+                                    done();
+                                })).not.toThrow();
+            });
+
         
     });

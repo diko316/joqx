@@ -59,7 +59,7 @@ function compile(subject) {
 
         generated = compiler.generate();
 
-        //console.log(generated);
+        //console.log("source: ", subject, "\n compiled: \n", generated);
 
         compiled = new F('helper, context', generated);
 

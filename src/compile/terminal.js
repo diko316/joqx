@@ -18,6 +18,12 @@ function compileTerminal(context, lexeme) {
                         TYPE_NUMBER);
         break;
 
+    case "octal":
+        value = context.createSymbol('' +
+                        parseInt(value.substring(2, value.length), 8),
+                        TYPE_NUMBER);
+        break;
+
     case "binary":
         value = context.createSymbol('' +
                         parseInt(value.substring(2, value.length), 2),

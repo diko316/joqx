@@ -40,9 +40,11 @@ var compiled;
 // console.log(compiled(testContext));
 
 
-compiled = compile('this = 2');
+//compiled = compile('0o143');
 
-console.log(compiled(testContext));
+compiled = compile('@inner.newInner.value = 5');
+
+console.log(compiled(testContext), ' context: ', testContext);
 
 //console.log("result: ", compiled(context), " context ", JSON.stringify(context));
 

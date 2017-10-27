@@ -25,6 +25,10 @@ var UTF_PAD = '0000',
         93: "]"
     };
 
+export {
+            jsonParsePath as jsonParse
+        };
+
 export
     function escapeString(subject) {
         var escapeIndex = ESCAPE_CHARS,
@@ -63,7 +67,7 @@ export
     }
 
 export
-    function jsonRecodeArrayPath(jsonString) {
+    function jsonRecodeArrayPath(jsonString, raw) {
         var path = jsonParsePath(jsonString),
             cescape = escapeString,
             l = path && path.length;
@@ -72,7 +76,8 @@ export
             for (; l--;) {
                 path[l] = '"' + cescape(path[l]) + '"';
             }
-            return '[' + path.join(',') + ']';
+            return raw === true ? path : '[' + path.join(',') + ']';
         }
-        return '[]';
+        return raw === true ? [] : '[]';
     }
+

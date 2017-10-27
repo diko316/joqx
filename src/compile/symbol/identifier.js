@@ -86,14 +86,20 @@ export default
 
         generateJSONPathArray() {
             var current = this,
-                list = [],
-                len = 0;
+                list = [];
+            var next;
 
-            for (; current.accessParent; current = current.accessParent) {
-                list[len++] = current.getCodeValue();
+            for (; current.accessParent; current = next) {
+                list.unshift(current.getCodeValue());
+
+                next = current.accessParent;
+
+                if (next && next.type === "jsonpath") {
+                    list.unshift.apply(list, next.getPathParts());
+                    break;
+                }
+
             }
-
-            list.reverse();
 
             return '[' + list.join(',') + ']';
 
@@ -127,6 +133,7 @@ export default
 
             // source should be finalized if not yet finalized
             this.addDependency(source);
+
 
             codes[line++] = ['// assign'];
             

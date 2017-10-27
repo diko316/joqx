@@ -4,7 +4,7 @@
 import IdentifierSymbol from "./identifier.js";
 
 import {
-            jsonRecodeArrayPath,
+            jsonRecodeArrayPath
             
         } from "../../helper/string.js";
 
@@ -21,11 +21,20 @@ export default
             return this.getAccessCodeValue();
         }
 
+        getPathParts() {
+            var path = this.value;
+            path = path.substring(1, path.length);
+            return jsonRecodeArrayPath(path, true);
+        }
 
         generateJSONPathArray() {
             var path = this.value;
             path = path.substring(1, path.length);
             return jsonRecodeArrayPath(path);
             
+        }
+
+        assign(source, operator) {
+            return super.assign(source, operator);
         }
     }
