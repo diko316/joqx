@@ -27,3 +27,15 @@ import "./binary/instanceof.js";
 import "./binary/in.js";
 import "./binary/equality.js";
 import "./binary/logical.js";
+
+import "./binary/assignment.js";
+import "./binary/assignment/exponent.js";
+import "./binary/assignment/product.js";
+import "./binary/assignment/quotient.js";
+import "./binary/assignment/remainder.js";
+import "./binary/assignment/sum.js";
+import "./binary/assignment/difference.js";
+
+
+import "./ternary/conditional.js";
+

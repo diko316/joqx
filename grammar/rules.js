@@ -129,7 +129,7 @@ module.exports = [
         
     "void(",            [/void\(/],
 
-    "intent",           [/\?[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/],
+    "intent",           [/\?[a-zA-Z\_\$][a-zA-Z0-9\-\_\$]*/],
 
 // last priority
     "identifier",       [/[a-zA-Z\_\$][a-zA-Z0-9\_\$]*/],

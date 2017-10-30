@@ -44,7 +44,17 @@ var compiled;
 
 //compiled = compile('@inner.newInner.value = 5');
 
-compiled = compile('result = 1 && inner.deepInner');
+//compiled = compile('result = 1 && inner.deepInner');
+
+//compiled = compile('buang **= 4');
+
+function numberToHex(value) {
+    return value.toString(16);
+}
+
+intent('intent-registry-test', numberToHex);
+
+compiled = compile('?intent-registry-test result = 255');
 
 
 console.log(compiled(testContext), ' context: ', testContext);

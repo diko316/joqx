@@ -144,6 +144,9 @@ export default
 
                 switch (operator) {
                 case '**':
+                    sourceReference = 'Math.pow(' + id + ', ' + sourceId + ')';
+                    break;
+
                 case '*':
                 case '/':
                 case '%':
