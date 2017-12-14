@@ -20,13 +20,17 @@ function promiseGuard(method$$1) {
         return executor;
     }
 
-var REGISTRY = createRegistry();
 var NAME_RE = /[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/;
 
+function Intent() {
+    this.registry = createRegistry();
+}
 
-function register(name, intent) {
-        var registry = REGISTRY;
+Intent.prototype = {
 
+    register: function (name, intent) {
+        var registry = this.registry;
+        
         if (!string(name)) {
             throw new Error("Invalid intent [name] parameter.");
         }
@@ -46,23 +50,36 @@ function register(name, intent) {
 
         registry.set(name, promiseGuard(intent));
 
-    }
+        return this;
+    },
 
+    exists: function (name) {
+        return this.registry.exists(name);
+    },
 
-
-
-function get(name) {
-        var registry = REGISTRY;
+    get: function (name) {
+        var registry = this.registry;
         return registry.exists(name) ? registry.get(name) : null;
-    }
+    },
 
-var REGISTRY$1 = createRegistry();
+    run: function (name, value) {
+        var registry = this.registry;
+
+        return registry.exists(name) ? registry.get(name)(value) : void(0);
+    }
+};
+
 var NAME_RE$1 = /[a-zA-Z\_\$][a-zA-Z0-9\_\$]*(\.[a-zA-Z\_\$][a-zA-Z0-9\_\$]*)*/;
 
+function Transformer() {
+    this.registry = createRegistry();
+}
 
-function register$1(name, transformer) {
-        var registry = REGISTRY$1;
+Transformer.prototype = {
 
+    register: function (name, transformer) {
+        var registry = this.registry;
+        
         if (!string(name)) {
             throw new Error("Invalid transformer [name] parameter.");
         }
@@ -82,15 +99,19 @@ function register$1(name, transformer) {
 
         registry.set(name, promiseGuard(transformer));
 
-    }
+        return this;
+    },
 
+    exists: function (name) {
+        return this.registry.exists(name);
+    },
 
-
-
-function get$1(name) {
-        var registry = REGISTRY$1;
+    get: function (name) {
+        var registry = this.registry;
         return registry.exists(name) ? registry.get(name) : null;
     }
+
+};
 
 var augmentedRoot = "5";
 var root = "4";
@@ -394,10 +415,10 @@ Symbol.prototype = {
 var INVALID_TYPE = "Invalid [type] parameter.";
 var INVALID_CLASS = "Invalid Symbol [Class] parameter.";
 var INVALID_NON_EXISTENT_TYPE = "Symbol do not exist from [type] parameter";
-var REGISTRY$2 = createRegistry();
+var REGISTRY = createRegistry();
 
 function instantiate(type, compiler) {
-    var registry = REGISTRY$2;
+    var registry = REGISTRY;
     var Class;
 
     if (!string(type)) {
@@ -414,7 +435,7 @@ function instantiate(type, compiler) {
     
 }
 
-function register$2(type, Class) {
+function register(type, Class) {
     var Base$$1 = Symbol;
 
     if (!string(type)) {
@@ -426,7 +447,7 @@ function register$2(type, Class) {
         throw new Error(INVALID_CLASS);
     }
     
-    REGISTRY$2.set(Class.prototype.type = type,
+    REGISTRY.set(Class.prototype.type = type,
                 Class);
 }
 
@@ -1438,25 +1459,25 @@ var BlockSymbol = (function (IdentifierSymbol) {
     return BlockSymbol;
 }(Identifier));
 
-register$2("default", Symbol);
+register("default", Symbol);
 
-register$2("null", NullSymbol);
-register$2("undefined", UndefinedSymbol);
+register("null", NullSymbol);
+register("undefined", UndefinedSymbol);
 
-register$2("string", StringSymbol);
-register$2("number", NumberSymbol);
-register$2("boolean", BooleanSymbol);
+register("string", StringSymbol);
+register("number", NumberSymbol);
+register("boolean", BooleanSymbol);
 
-register$2("array", Array$1);
-register$2("object", ObjectSymbol);
-register$2("call", CallSymbol);
+register("array", Array$1);
+register("object", ObjectSymbol);
+register("call", CallSymbol);
 
-register$2("identifier", Identifier);
-register$2("jsonpath", JsonPath);
+register("identifier", Identifier);
+register("jsonpath", JsonPath);
 
-register$2("arguments", Arguments);
-register$2("transformer", TransformerCallSymbol);
-register$2("block", BlockSymbol);
+register("arguments", Arguments);
+register("transformer", TransformerCallSymbol);
+register("block", BlockSymbol);
 
 var Compile = function Compile(iterator) {
         var identifierType = "identifier";
@@ -1606,7 +1627,38 @@ var Compile = function Compile(iterator) {
                     code.join(';' + this.lineFeed) + ";" : "";
     };
 
-function Helper() {
+function FakePromise(value) {
+
+    function then(onFulfill, onReject) {
+        var subject = value,
+            isFunction = method,
+            canFulfill = isFunction(onFulfill);
+
+        if (thenable(subject)) {
+            return subject.then(onFulfill, onReject);
+        }
+
+        if (canFulfill) {
+            subject = onFulfill(subject);
+        }
+
+        return new FakePromise(subject);
+        
+    }
+
+    this.then = then;
+}
+
+function Helper(intent, transformer) {
+    var IntentClass = Intent,
+        TransformerClass = Transformer;
+
+    this.intentRegistry = intent instanceof IntentClass ?
+                                    intent : new Intent();
+
+    this.transformerRegistry = transformer instanceof TransformerClass ?
+                                    transformer : new TransformerClass();
+
     this.transformCache = {};
     this.intentCache = {};
 }
@@ -1614,6 +1666,9 @@ function Helper() {
 Helper.prototype = {
 
     constructor: Helper,
+
+    transformerRegistry: null,
+    intentRegistry: null,
 
     contains: contains,
     number: number,
@@ -1672,7 +1727,7 @@ Helper.prototype = {
             return list[access];
         }
 
-        found = get$1(name);
+        found = this.transformerRegistry.get(name);
         if (!found) {
             throw new Error("Transformer named " + name + " do not exist.");
         }
@@ -1690,7 +1745,7 @@ Helper.prototype = {
             return list[access];
         }
 
-        found = get(name);
+        found = this.intentRegistry.get(name);
         if (!found) {
             throw new Error("Intent named " + name + " do not exist.");
         }
@@ -1706,9 +1761,13 @@ Helper.prototype = {
         return this.getTransformer(name)(this, value);
     },
 
-    formatReturn: function (value) {
-        return thenable(value) ?
-                    value : Promise.resolve(value);
+    formatReturn: function (value, rawValue) {
+
+        if (rawValue === true) {
+            return value;
+        }
+
+        return thenable(value) ? value : new FakePromise(value);
     },
 
     reject: function (error) {
@@ -2153,7 +2212,7 @@ function compileRule(compiler, lexeme) {
                 value.declare();
                 compiler.appendCode([
                     value.id, ' = ', compiler.helperSymbol.id,
-                                '.formatReturn(', value.id, ')'
+                                '.formatReturn(', value.id, ', rawResult)'
                 ]);
                 compiler.nullFill(value.id);
                 compiler.appendCode([
@@ -2168,81 +2227,133 @@ function compileRule(compiler, lexeme) {
         }
     }
 
-var helper = new Helper();
+var executor = compileTerminal.constructor;
 
-function compile(subject) {
-    var F = compile.constructor,
-        compileTerminal$$1 = compileTerminal,
-        compileRule$$1 = compileRule,
-        compiled = null,
-        walk = iterator;
+function Compiler(intent, transformer) {
+    this.helper = new Helper(intent, transformer);
+}
 
-    var lexeme, generated, compiler;
+Compiler.prototype = {
 
-    function exec(contextObject) {
-        try {
-            return compiled(helper, contextObject);
+    intent: function (name, intent) {
+        this.helper.intentRegistry.register(name, intent);
+
+        return this;
+    },
+
+    transformer: function (name, transformer) {
+
+        this.helper.transformerRegistry.register(name, transformer);
+
+        return this;
+
+    },
+
+    build: function (subject) {
+        var compileTerminal$$1 = compileTerminal,
+            compileRule$$1 = compileRule,
+            walk = iterator;
+
+        var lexeme, generated, compiler;
+
+        if (!string(subject)) {
+            throw new Error("Invalid String [subject] parameter.");
         }
-        catch (e) {
-            console.warn(e);
-        }
+
+        compiler = new Compile(walk);
         
-        return undefined;
-    }
+        walk.reset();
+        walk.set(subject);
 
-    if (!string(subject)) {
-        throw new Error("Invalid String [subject] parameter.");
-    }
+        walk.completed = false;
 
-    compiler = new Compile(walk);
+        lexeme = walk.next();
+
+        for (; lexeme; lexeme = walk.next()) {
+            
+            // for terminal
+            (lexeme.terminal ?
+                compileTerminal$$1 :
+                compileRule$$1)(compiler, lexeme);
+        }
+
+        if (!walk.error && walk.completed) {
+
+            generated = compiler.generate();
+
+            return generated;
+        
+        }
+
+        return null;
+    },
+
+    compile: function (subject) {
+        var F = executor,
+            me = this,
+            generated = this.build(subject),
+            compiled = null;
     
-    walk.reset();
-    walk.set(subject);
+        function exec(contextObject, rawResult) {
+            try {
+                return compiled(me.helper, contextObject, rawResult);
+            }
+            catch (e) {
+                console.warn(e);
+            }
+            
+            return undefined;
+        }
+    
+        if (!generated) {
+            throw new Error("Unable to compile due to JIT errors.");
+        }
 
-    walk.completed = false;
-
-    lexeme = walk.next();
-
-    for (; lexeme; lexeme = walk.next()) {
-        
-        // for terminal
-        (lexeme.terminal ?
-            compileTerminal$$1 :
-            compileRule$$1)(compiler, lexeme);
-    }
-
-    if (!walk.error && walk.completed) {
-
-        generated = compiler.generate();
-
-        //console.log("source: ", subject, "\n compiled: \n", generated);
-
-        compiled = new F('helper, context', generated);
+        compiled = new F('helper, context, rawResult', generated);
 
         return exec;
     
     }
 
-    return null;
+};
 
-    
-
-}
-
-// test
+var DEFAULT_COMPILER = new Compiler();
 var API$1 = {
+            Intent: Intent,
+            Transformer: Transformer,
+            
+            createCompiler: createCompiler,
+            createTransformer: createTransformer,
+            createIntent: createIntent,
+
             intent: intent,
             transformer: transformer,
             compile: compile
         };
 
+function createIntent() {
+        return new Transformer();
+    }
+
+function createTransformer() {
+        return new Transformer();
+    }
+
+function createCompiler(intent, transformer) {
+        return new Compiler(intent, transformer);
+    }
+
+function compile(subject) {
+        return DEFAULT_COMPILER.compile(subject);
+    }
+
 function intent(name, intentMethod) {
-        register(name, intentMethod);
+        DEFAULT_COMPILER.intent(name, intentMethod);
         return API$1;
     }
 
 function transformer(name, transformerMethod) {
-        register$1(name, transformerMethod);
+        DEFAULT_COMPILER.transformer(name, transformerMethod);
         return API$1;
     }
 
@@ -2251,6 +2362,11 @@ function transformer(name, transformerMethod) {
 
 var API$3 = Object.freeze({
 	default: API$1,
+	Intent: Intent,
+	Transformer: Transformer,
+	createIntent: createIntent,
+	createTransformer: createTransformer,
+	createCompiler: createCompiler,
 	compile: compile,
 	intent: intent,
 	transformer: transformer
@@ -2258,6 +2374,6 @@ var API$3 = Object.freeze({
 
 global$1.joqx = API$3;
 
-export { compile, intent, transformer };
+export { Intent, Transformer, createIntent, createTransformer, createCompiler, compile, intent, transformer };
 export default API$3;
 //# sourceMappingURL=joqx.es.js.map

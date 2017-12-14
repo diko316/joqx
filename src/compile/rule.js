@@ -397,7 +397,7 @@ export
                 value.declare();
                 compiler.appendCode([
                     value.id, ' = ', compiler.helperSymbol.id,
-                                '.formatReturn(', value.id, ')'
+                                '.formatReturn(', value.id, ', rawResult)'
                 ]);
                 compiler.nullFill(value.id);
                 compiler.appendCode([

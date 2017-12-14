@@ -56,8 +56,14 @@ intent('intent-registry-test', numberToHex);
 
 compiled = compile('?intent-registry-test result = 255');
 
+var result = compiled(testContext);
 
-console.log(compiled(testContext), ' context: ', testContext);
+
+console.log(result, ' context: ', testContext);
+
+result.then(function (value) {
+    console.log('on ', value);
+});
 
 //console.log("result: ", compiled(context), " context ", JSON.stringify(context));
 

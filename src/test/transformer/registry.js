@@ -73,6 +73,7 @@ describe(`Should be able to register and compile "transformer" identifier and
                 expect(() => compiled = compiler.compile('255 |> transformer.registry.test')).
                     not.toThrow();
 
+
                 expect(() => compiled(context).
                     then((value) => {
                         expect(value).

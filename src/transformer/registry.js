@@ -9,14 +9,17 @@ import {
 import { promiseGuard } from "../executor.js";
 
 
-const REGISTRY = createRegistry(),
-    NAME_RE = /[a-zA-Z\_\$][a-zA-Z0-9\_\$]*(\.[a-zA-Z\_\$][a-zA-Z0-9\_\$]*)*/;
+const NAME_RE = /[a-zA-Z\_\$][a-zA-Z0-9\_\$]*(\.[a-zA-Z\_\$][a-zA-Z0-9\_\$]*)*/;
 
+function Transformer() {
+    this.registry = createRegistry();
+}
 
-export
-    function register(name, transformer) {
-        var registry = REGISTRY;
+Transformer.prototype = {
 
+    register: function (name, transformer) {
+        var registry = this.registry;
+        
         if (!string(name)) {
             throw new Error("Invalid transformer [name] parameter.");
         }
@@ -36,16 +39,19 @@ export
 
         registry.set(name, promiseGuard(transformer));
 
-    }
+        return this;
+    },
 
+    exists: function (name) {
+        return this.registry.exists(name);
+    },
 
-export
-    function exists(name) {
-        return REGISTRY.exists(name);
-    }
-
-export
-    function get(name) {
-        var registry = REGISTRY;
+    get: function (name) {
+        var registry = this.registry;
         return registry.exists(name) ? registry.get(name) : null;
     }
+
+};
+
+
+export { Transformer };

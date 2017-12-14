@@ -15,18 +15,23 @@ import {
             escapeString
         } from "../helper/string.js";
 
-
-import {
-            get as getTransformer
-        } from "../transformer/registry.js";
-
-import {
-            get as getIntent
-        } from "../intent/registry.js";
+import { FakePromise } from "../helper/promise.js";
 
 
+import { Transformer } from "../transformer/registry.js";
 
-function Helper() {
+import { Intent } from "../intent/registry.js";
+
+function Helper(intent, transformer) {
+    var IntentClass = Intent,
+        TransformerClass = Transformer;
+
+    this.intentRegistry = intent instanceof IntentClass ?
+                                    intent : new Intent();
+
+    this.transformerRegistry = transformer instanceof TransformerClass ?
+                                    transformer : new TransformerClass();
+
     this.transformCache = {};
     this.intentCache = {};
 }
@@ -34,6 +39,9 @@ function Helper() {
 Helper.prototype = {
 
     constructor: Helper,
+
+    transformerRegistry: null,
+    intentRegistry: null,
 
     contains: contains,
     number: number,
@@ -92,7 +100,7 @@ Helper.prototype = {
             return list[access];
         }
 
-        found = getTransformer(name);
+        found = this.transformerRegistry.get(name);
         if (!found) {
             throw new Error("Transformer named " + name + " do not exist.");
         }
@@ -110,7 +118,7 @@ Helper.prototype = {
             return list[access];
         }
 
-        found = getIntent(name);
+        found = this.intentRegistry.get(name);
         if (!found) {
             throw new Error("Intent named " + name + " do not exist.");
         }
@@ -126,9 +134,13 @@ Helper.prototype = {
         return this.getTransformer(name)(this, value);
     },
 
-    formatReturn: function (value) {
-        return thenable(value) ?
-                    value : Promise.resolve(value);
+    formatReturn: function (value, rawValue) {
+
+        if (rawValue === true) {
+            return value;
+        }
+
+        return thenable(value) ? value : new FakePromise(value);
     },
 
     reject: function (error) {

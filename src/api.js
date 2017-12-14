@@ -1,14 +1,21 @@
 'use strict';
 
-// test
-import { register as regIntent } from "./intent/registry.js";
+import { Intent } from "./intent/registry.js";
 
-import { register as regTransformer } from "./transformer/registry.js";
+import { Transformer } from "./transformer/registry.js";
 
-import compile from "./compile.js";
+import { Compiler } from "./compiler.js";
 
+const   DEFAULT_COMPILER = new Compiler(),
 
-const API = {
+        API = {
+            Intent: Intent,
+            Transformer: Transformer,
+            
+            createCompiler: createCompiler,
+            createTransformer: createTransformer,
+            createIntent: createIntent,
+
             intent: intent,
             transformer: transformer,
             compile: compile
@@ -17,18 +24,39 @@ const API = {
 export default API;
 
 export {
-            compile
-        };
+            Intent,
+            Transformer
+    };
+
+export
+    function createIntent() {
+        return new Transformer();
+    }
+
+export
+    function createTransformer() {
+        return new Transformer();
+    }
+
+export
+    function createCompiler(intent, transformer) {
+        return new Compiler(intent, transformer);
+    }
+
+export
+    function compile(subject) {
+        return DEFAULT_COMPILER.compile(subject);
+    }
 
 export
     function intent(name, intentMethod) {
-        regIntent(name, intentMethod);
+        DEFAULT_COMPILER.intent(name, intentMethod);
         return API;
     }
 
 export
     function transformer(name, transformerMethod) {
-        regTransformer(name, transformerMethod);
+        DEFAULT_COMPILER.transformer(name, transformerMethod);
         return API;
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "joqx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Extensible Javascript Object Query Language (joqx)",
   "main": "dist/joqx.js",
   "module": "dist/joqx.es.js",

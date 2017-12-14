@@ -8,14 +8,17 @@ import {
 
 import { promiseGuard } from "../executor.js";
 
-const REGISTRY = createRegistry(),
-    NAME_RE = /[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/;
+const NAME_RE = /[a-zA-Z\$][a-zA-Z0-9\$]*(\-[a-zA-Z0-9\$]+)*/;
 
+function Intent() {
+    this.registry = createRegistry();
+}
 
-export
-    function register(name, intent) {
-        var registry = REGISTRY;
+Intent.prototype = {
 
+    register: function (name, intent) {
+        var registry = this.registry;
+        
         if (!string(name)) {
             throw new Error("Invalid intent [name] parameter.");
         }
@@ -35,17 +38,23 @@ export
 
         registry.set(name, promiseGuard(intent));
 
-    }
+        return this;
+    },
 
+    exists: function (name) {
+        return this.registry.exists(name);
+    },
 
-export
-    function exists(name) {
-        return REGISTRY.exists(name);
-    }
-
-export
-    function get(name) {
-        var registry = REGISTRY;
+    get: function (name) {
+        var registry = this.registry;
         return registry.exists(name) ? registry.get(name) : null;
+    },
+
+    run: function (name, value) {
+        var registry = this.registry;
+
+        return registry.exists(name) ? registry.get(name)(value) : void(0);
     }
-    
+};
+
+export { Intent };
